@@ -18,8 +18,8 @@ if __name__ == '__main__':
     cell_height = 19
     cell_width = 10
 
-    left = (WIDTH - cell_height * cell_size) // 2
-    top = (HEIGHT - cell_width * cell_size) // 2
+    left = (WIDTH - (cell_width * cell_size)) // 2
+    top = (HEIGHT - (cell_height * cell_size)) // 2
     board.set_view(left, top, cell_size)
 
     while running:
