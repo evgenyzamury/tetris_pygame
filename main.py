@@ -14,8 +14,12 @@ if __name__ == '__main__':
 
     board = Board(10, 19)
     cell_size = 40
-    left = (WIDTH - 10 * cell_size) // 2
-    top = (HEIGHT - 19 * cell_size) // 2
+
+    cell_height = 19
+    cell_width = 10
+
+    left = (WIDTH - cell_height * cell_size) // 2
+    top = (HEIGHT - cell_width * cell_size) // 2
     board.set_view(left, top, cell_size)
 
     while running:
