@@ -2,9 +2,10 @@ import copy
 import pygame
 
 
-class Board:
+class Board(pygame.sprite.Sprite):
     # создание поля
     def __init__(self, width, height):
+        super().__init__()
         self.width = width
         self.height = height
         self.board = [[0] * width for _ in range(height)]
@@ -16,10 +17,18 @@ class Board:
         self.color_step = None
 
     # настройка внешнего вида
-    def set_view(self, left, top, cell_size):
+    def set_view(self, left, top, cell_size, vertical_borders, horizontal_borders):
         self.left = left
         self.top = top
         self.cell_size = cell_size
+        x1, y1 = self.left, self.top
+        x2, y2 = self.left + (self.width * self.cell_size), self.top + (self.height * self.cell_size)
+        rect = pygame.Rect(x1 - 1, y1, 1, self.cell_size * self.height)
+        rect2 = pygame.Rect(x2, y1, 1, self.cell_size * self.height)
+        rect3 = pygame.Rect(x1, y2, self.width * self.cell_size, 10)
+        vertical_borders.append(rect)
+        vertical_borders.append(rect2)
+        horizontal_borders.append(rect3)
 
     def render(self, screen):
         for i, line in enumerate(self.board):
