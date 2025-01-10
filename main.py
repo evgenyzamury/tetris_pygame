@@ -1,14 +1,44 @@
 import pygame
+import random
 from board import Board
-from block import Block
+from zblock import ZBlock
+from lblock import LBlock
 
 SIZE = WIDTH, HEIGHT = 800, 800
 FPS = 60
+
+BLOCKS = [ZBlock, LBlock]
 
 
 def colliders_clear(vertical_borders, horizontal_borders):
     vertical_borders.clear()
     horizontal_borders.clear()
+
+
+def spawn_new_block(block=None):
+    index = random.randint(0, 1)
+    if block:
+        if isinstance(block, ZBlock):
+            pos = board.get_cell(block.rect.center)
+            board.create_block(pos)
+            pos = pos[0] - 1, pos[1]
+            board.create_block(pos)
+            pos = pos[0] + 1, pos[1] - 1
+            board.create_block(pos)
+            pos = pos[0] + 1, pos[1]
+            board.create_block(pos)
+        elif isinstance(block, LBlock):
+            pos = board.get_cell(block.rect.topleft)
+            board.create_block(pos)
+            pos = pos[0], pos[1] + 1
+            board.create_block(pos)
+            pos = pos[0], pos[1] + 1
+            board.create_block(pos)
+            pos = pos[0], pos[1] + 1
+            board.create_block(pos)
+
+    block = BLOCKS[index](all_group, left, top, cell_size)
+    return block
 
 
 if __name__ == '__main__':
@@ -32,7 +62,7 @@ if __name__ == '__main__':
     top = (HEIGHT - (cell_height * cell_size)) // 2
 
     board.set_view(left, top, cell_size, vertical_borders, horizontal_borders)
-    block = Block(all_group, left, top, cell_size)
+    block = spawn_new_block()
 
     while running:
         board.update(vertical_borders, horizontal_borders)
@@ -53,20 +83,12 @@ if __name__ == '__main__':
                     block.speed = 4
 
         if block.is_ground:
-            pos = board.get_cell(block.rect.center)
-            board.create_block(pos)
-            pos = pos[0] - 1, pos[1]
-            board.create_block(pos)
-            pos = pos[0] + 1, pos[1] - 1
-            board.create_block(pos)
-            pos = pos[0] + 1, pos[1]
-            board.create_block(pos)
-            block = Block(all_group, left, top, cell_size)
+            block = spawn_new_block(block)
 
         board.render(screen)
 
         block.draw(screen)
-        block.update(vertical_borders, horizontal_borders)
+        block.update(horizontal_borders)
 
         all_group.draw(screen)
         all_group.update(vertical_borders, horizontal_borders)

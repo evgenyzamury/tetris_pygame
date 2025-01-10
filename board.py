@@ -1,6 +1,6 @@
 import copy
 import pygame
-from block import load_image
+from zblock import load_image
 
 
 class Board(pygame.sprite.Sprite):
