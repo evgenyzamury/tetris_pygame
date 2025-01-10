@@ -1,8 +1,12 @@
 import copy
 import pygame
+from block import load_image
 
 
 class Board(pygame.sprite.Sprite):
+    block = load_image('block.png')
+    block = pygame.transform.scale(block, (40, 40))
+
     # создание поля
     def __init__(self, width, height):
         super().__init__()
@@ -21,6 +25,9 @@ class Board(pygame.sprite.Sprite):
         self.left = left
         self.top = top
         self.cell_size = cell_size
+        self.create_borders(vertical_borders, horizontal_borders)
+
+    def create_borders(self, vertical_borders, horizontal_borders):
         x1, y1 = self.left, self.top
         x2, y2 = self.left + (self.width * self.cell_size), self.top + (self.height * self.cell_size)
         rect = pygame.Rect(x1 - 1, y1, 1, self.cell_size * self.height)
@@ -40,16 +47,27 @@ class Board(pygame.sprite.Sprite):
                                      (self.left + j * self.cell_size, self.top + i * self.cell_size,
                                       self.cell_size, self.cell_size), 0)
                 elif elem == 1:
-                    pygame.draw.rect(screen, (0, 255, 0),
-                                     (self.left + j * self.cell_size, self.top + i * self.cell_size,
-                                      self.cell_size, self.cell_size), 0)
+                    pygame.draw.rect(screen, (255, 255, 255),
+                                     (x + 5, y + 5,
+                                      30, 30), 5)
 
                 pygame.draw.rect(screen, (255, 255, 255),
                                  (self.left + j * self.cell_size, self.top + i * self.cell_size,
                                   self.cell_size, self.cell_size), 1)
 
-    def get_cell(self, mouse_pos):
-        x, y = mouse_pos
+    def update(self, vertical_borders, horizontal_borders):
+        self.create_borders(vertical_borders, horizontal_borders)
+        for i, line in enumerate(self.board):
+            for j, elem in enumerate(line):
+                if bool(elem):
+                    x = self.cell_size * j + self.left
+                    y = self.cell_size * i + self.top
+                    rect = pygame.Rect(x, y, self.cell_size, self.cell_size)
+                    vertical_borders.append(rect)
+                    horizontal_borders.append(rect)
+
+    def get_cell(self, pos):
+        x, y = pos
         x -= self.left
         y -= self.top
         x //= self.cell_size
@@ -59,14 +77,10 @@ class Board(pygame.sprite.Sprite):
             return x, y
         return None
 
-    def get_click(self, mouse_pos):
-        cell = self.get_cell(mouse_pos)
-        self.on_click(cell)
-
-    def on_click(self, cell):
-        if cell:
-            x, y = cell
-            self.board[y][x] = 1
+    def create_block(self, cell):
+        x = cell[0]
+        y = cell[1]
+        self.board[y][x] = 1
 #
 #
 # if __name__ == '__main__':

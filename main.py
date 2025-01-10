@@ -5,6 +5,12 @@ from block import Block
 SIZE = WIDTH, HEIGHT = 800, 800
 FPS = 60
 
+
+def colliders_clear(vertical_borders, horizontal_borders):
+    vertical_borders.clear()
+    horizontal_borders.clear()
+
+
 if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode(SIZE)
@@ -24,13 +30,12 @@ if __name__ == '__main__':
 
     left = (WIDTH - (cell_width * cell_size)) // 2
     top = (HEIGHT - (cell_height * cell_size)) // 2
-    print(left, top)
 
     board.set_view(left, top, cell_size, vertical_borders, horizontal_borders)
-    active_block = Block(all_group, left, top, cell_size)
-    print(vertical_borders, horizontal_borders)
+    block = Block(all_group, left, top, cell_size)
 
     while running:
+        board.update(vertical_borders, horizontal_borders)
         screen.fill((0, 0, 0))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -38,21 +43,34 @@ if __name__ == '__main__':
             elif event.type == pygame.KEYDOWN:
                 key = pygame.key.get_pressed()
                 if key[pygame.K_DOWN]:
-                    active_block.speed = 20
+                    block.speed = 20
                 if event.key == pygame.K_RIGHT:
-                    active_block.move_right()
+                    block.move_right()
                 if event.key == pygame.K_LEFT:
-                    active_block.move_left()
+                    block.move_left()
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_DOWN:
-                    active_block.speed = 4
+                    block.speed = 4
 
-        if active_block.is_ground:
-            active_block = Block(all_group, left, top, cell_size)
+        if block.is_ground:
+            pos = board.get_cell(block.rect.center)
+            board.create_block(pos)
+            pos = pos[0] - 1, pos[1]
+            board.create_block(pos)
+            pos = pos[0] + 1, pos[1] - 1
+            board.create_block(pos)
+            pos = pos[0] + 1, pos[1]
+            board.create_block(pos)
+            block = Block(all_group, left, top, cell_size)
 
         board.render(screen)
+
+        block.draw(screen)
+        block.update(vertical_borders, horizontal_borders)
+
         all_group.draw(screen)
         all_group.update(vertical_borders, horizontal_borders)
+        colliders_clear(vertical_borders, horizontal_borders)
         clock.tick(FPS)
         pygame.display.flip()
     pygame.quit()
