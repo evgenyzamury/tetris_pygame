@@ -1,12 +1,8 @@
 import copy
 import pygame
-from zblock import load_image
 
 
 class Board(pygame.sprite.Sprite):
-    block = load_image('block.png')
-    block = pygame.transform.scale(block, (40, 40))
-
     # создание поля
     def __init__(self, width, height):
         super().__init__()
