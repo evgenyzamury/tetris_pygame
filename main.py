@@ -1,13 +1,7 @@
 import pygame
 import random
 from board import Board
-from zblock import ZBlock
-from sblock import SBlock
-from iblock import IBlock
-from lblock import LBlock
-from tblock import TBlock
-from jblock import JBlock
-from oblock import OBlock
+from blocks import *
 
 SIZE = WIDTH, HEIGHT = 800, 800
 FPS = 60
@@ -29,7 +23,7 @@ def spawn_new_block(block=None):
             x, y = rect.center
             cell = board.get_cell((x, y))
             board.create_block(cell)
-    block = BLOCKS[index](all_group, left, top, cell_size)
+    block = BLOCKS[index](left, top - 120, cell_size)
     return block
 
 
@@ -44,7 +38,7 @@ if __name__ == '__main__':
     board = Board(10, 19)
     cell_size = 40
 
-    cell_height = 19
+    cell_height = 22
     cell_width = 10
     vertical_borders = []
     horizontal_borders = []
@@ -67,9 +61,11 @@ if __name__ == '__main__':
                 if key[pygame.K_DOWN]:
                     block.speed = 20
                 if event.key == pygame.K_RIGHT:
-                    block.move_right()
+                    block.move_right(vertical_borders)
                 if event.key == pygame.K_LEFT:
-                    block.move_left()
+                    block.move_left(vertical_borders)
+                if event.key == pygame.K_UP:
+                    block.rotation(vertical_borders)
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_DOWN:
                     block.speed = 4

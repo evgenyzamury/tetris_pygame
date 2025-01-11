@@ -1,4 +1,5 @@
 import pygame
+import numpy
 
 
 class Block(pygame.sprite.Sprite):
@@ -29,11 +30,28 @@ class Block(pygame.sprite.Sprite):
             self.tick = 0
         self.fill_rects()
 
-    def move_right(self):
+    def move_right(self, colliders):
         self.rect.x += self.cell_size
+        self.fill_rects()
+        if self.check_collide(colliders):
+            self.rect.x -= self.cell_size
+            self.fill_rects()
 
-    def move_left(self):
+    def move_left(self, colliders):
         self.rect.x -= self.cell_size
+        self.fill_rects()
+        if self.check_collide(colliders):
+            self.rect.x += self.cell_size
+            self.fill_rects()
+
+    def rotation(self, colliders):
+        cords = numpy.array(self.cords)
+        rotate_matrix = numpy.rot90(cords)
+        self.cords = rotate_matrix
+        self.fill_rects()
+        if self.check_collide(colliders):
+            self.cords = cords
+            self.fill_rects()
 
     def draw(self, screen):
         for rect in self.rects:

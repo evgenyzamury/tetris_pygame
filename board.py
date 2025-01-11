@@ -26,12 +26,14 @@ class Board(pygame.sprite.Sprite):
     def create_borders(self, vertical_borders, horizontal_borders):
         x1, y1 = self.left, self.top
         x2, y2 = self.left + (self.width * self.cell_size), self.top + (self.height * self.cell_size)
-        rect = pygame.Rect(x1 - 1, y1, 1, self.cell_size * self.height)
-        rect2 = pygame.Rect(x2, y1, 1, self.cell_size * self.height)
-        rect3 = pygame.Rect(x1, y2, self.width * self.cell_size, 10)
-        vertical_borders.append(rect)
-        vertical_borders.append(rect2)
-        horizontal_borders.append(rect3)
+        # создание боковых границ
+        left_rect = pygame.Rect(x1 - 50, y1, 50, self.cell_size * self.height)
+        right_rect = pygame.Rect(x2, y1, 50, self.cell_size * self.height)
+        # создадим rect для нижней границы
+        horizontal_rect = pygame.Rect(x1, y2, self.width * self.cell_size, 40)
+        vertical_borders.append(left_rect)
+        vertical_borders.append(right_rect)
+        horizontal_borders.append(horizontal_rect)
 
     def render(self, screen):
         for i, line in enumerate(self.board):
