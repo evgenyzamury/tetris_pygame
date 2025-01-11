@@ -9,12 +9,6 @@ class LBlock(Block):
         self.rect = self.image.get_rect()
         self.rect.x = left + cell_size * 3
         self.rect.y = top
-
-    def fill_rects(self):
-        self.rects = []
-        x, y = self.rect.topleft
-        x, y = x + 5, y + 5
-        self.rects.append(pygame.Rect(x, y, 30, 30))
-        self.rects.append(pygame.Rect(x, y + 40, 30, 30))
-        self.rects.append(pygame.Rect(x, y + 80, 30, 30))
-        self.rects.append(pygame.Rect(x + 40, y + 80, 30, 30))
+        self.cords = [[1, 0],
+                      [1, 0],
+                      [1, 1]]

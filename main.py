@@ -2,14 +2,17 @@ import pygame
 import random
 from board import Board
 from zblock import ZBlock
+from sblock import SBlock
 from iblock import IBlock
 from lblock import LBlock
 from tblock import TBlock
+from jblock import JBlock
+from oblock import OBlock
 
 SIZE = WIDTH, HEIGHT = 800, 800
 FPS = 60
 
-BLOCKS = [ZBlock, IBlock, LBlock, TBlock]
+BLOCKS = [ZBlock, SBlock, IBlock, LBlock, TBlock, JBlock, OBlock]
 
 
 def colliders_clear(vertical_borders, horizontal_borders):
@@ -18,7 +21,7 @@ def colliders_clear(vertical_borders, horizontal_borders):
 
 
 def spawn_new_block(block=None):
-    index = random.randint(0, 3)
+    index = random.randint(0, 6)
     # если у нас есть блок, то оставим его снизу
     if block:
         # переберём все ректы и поставим их в сетке

@@ -8,6 +8,7 @@ class Block(pygame.sprite.Sprite):
         self.tick = 0
         self.is_ground = False
         self.rects = []
+        self.cords = []
         self.rect = None
         self.cell_size = cell_size
 
@@ -46,4 +47,10 @@ class Block(pygame.sprite.Sprite):
             return False
 
     def fill_rects(self):
-        pass
+        self.rects = []
+        x, y = self.rect.topleft
+        x, y = x + 5, y + 5
+        for ky, cords in enumerate(self.cords):
+            for kx, block in enumerate(cords):
+                if block:
+                    self.rects.append(pygame.Rect(x + kx * self.cell_size, y + ky * self.cell_size, 30, 30))
