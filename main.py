@@ -1,5 +1,7 @@
 import random
 
+import pygame
+
 from blocks import *
 from board import Board
 
@@ -22,7 +24,10 @@ def spawn_new_block(block=None):
         for rect in block.rects:
             x, y = rect.center
             cell = board.get_cell((x, y))
-            board.create_block(cell)
+            if cell:
+                board.create_block(cell)
+            else:
+                return False
     block = BLOCKS[index](left, top - 120, cell_size)
     return block
 
@@ -38,7 +43,11 @@ if __name__ == '__main__':
     board = Board(10, 19)
     cell_size = 40
 
-    cell_height = 22
+    defeat = False
+    tetris_game_running = True
+    start_menu = False
+
+    cell_height = 19
     cell_width = 10
     vertical_borders = []
     horizontal_borders = []
@@ -56,7 +65,7 @@ if __name__ == '__main__':
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            elif event.type == pygame.KEYDOWN:
+            elif tetris_game_running and event.type == pygame.KEYDOWN:
                 key = pygame.key.get_pressed()
                 if key[pygame.K_DOWN]:
                     block.speed = 20
@@ -66,24 +75,43 @@ if __name__ == '__main__':
                     block.move_left(vertical_borders)
                 if event.key == pygame.K_UP:
                     block.rotation(vertical_borders)
-            elif event.type == pygame.KEYUP:
+                if event.key == pygame.K_SPACE:
+                    block.instant_fall(horizontal_borders)
+            elif tetris_game_running and event.type == pygame.KEYUP:
                 if event.key == pygame.K_DOWN:
                     block.speed = 4
 
             elif event.type == pygame.MOUSEMOTION:
                 print(event.pos)
 
-        if block.is_ground:
+        if tetris_game_running and block.is_ground:
             block = spawn_new_block(block)
-            board.check_fill_line()
+            if block:
+                board.check_fill_line()
+            else:
+                defeat = True
+                tetris_game_running = False
 
         board.render(screen)
 
-        block.draw(screen)
-        block.update(horizontal_borders)
+        if start_menu:
+            print('start_menu')
+            # отрисовка начального меню
+            pass
 
-        all_group.draw(screen)
-        all_group.update(vertical_borders, horizontal_borders)
+        elif tetris_game_running:
+            print('gaming')
+
+            block.draw(screen)
+            block.update(horizontal_borders)
+
+            all_group.draw(screen)
+            all_group.update(vertical_borders, horizontal_borders)
+        elif defeat:
+            print('defeats')
+            # отрисовка поражения
+            pass
+
         colliders_clear(vertical_borders, horizontal_borders)
         clock.tick(FPS)
         pygame.display.flip()

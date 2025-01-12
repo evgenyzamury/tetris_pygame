@@ -29,8 +29,8 @@ class Board(pygame.sprite.Sprite):
         x1, y1 = self.left, self.top
         x2, y2 = self.left + (self.width * self.cell_size), self.top + (self.height * self.cell_size)
         # создание боковых границ
-        left_rect = pygame.Rect(x1 - 50, y1, 50, self.cell_size * self.height)
-        right_rect = pygame.Rect(x2, y1, 50, self.cell_size * self.height)
+        left_rect = pygame.Rect(x1 - 50, y1 - 100, 50, self.cell_size * self.height + 100)
+        right_rect = pygame.Rect(x2, y1 - 100, 50, self.cell_size * self.height + 100)
         # создадим rect для нижней границы
         horizontal_rect = pygame.Rect(x1, y2, self.width * self.cell_size, 40)
         vertical_borders.append(left_rect)
@@ -110,32 +110,10 @@ class Board(pygame.sprite.Sprite):
 
     def fall_block_after_fill_lines(self, y, count):
         # роняем блоки при заполнении линий
+        board = copy.deepcopy(self.board)
         for index in range(count):
             for i in range(y[index], 0, -1):
-                self.board[i] = self.board[i - 1]
+                self.board[i] = board[i - 1]
 
     def add_points(self, count_lines):
         self.score += 1000 * count_lines
-#
-# if __name__ == '__main__':
-#     a = 30
-#     size = width, height = 700, 700
-#     pygame.init()
-#     screen = pygame.display.set_mode(size)
-#     line = Lines(10, 10)
-#     running = True
-#     clock = pygame.time.Clock()
-#     speed = 5
-#     start_game = False
-#
-#     while running:
-#         for event in pygame.event.get():
-#             if event.type == pygame.QUIT:
-#                 running = False
-#             if event.type == pygame.MOUSEBUTTONDOWN and not start_game:
-#                 line.get_click(event.pos)
-#         screen.fill((0, 0, 0))
-#         line.go()
-#         line.render(screen)
-#         clock.tick(speed)
-#         pygame.display.flip()

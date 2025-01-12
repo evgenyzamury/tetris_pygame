@@ -5,12 +5,12 @@ import numpy
 class Block(pygame.sprite.Sprite):
     def __init__(self, cell_size):
         super().__init__()
-        self.speed = 4
+        self.speed = 2
         self.tick = 0
         self.is_ground = False
         self.rects = []
         self.cords = []
-        self.rect = None
+        self.rect = pygame.Rect((100, 100, 100, 100))
         self.cell_size = cell_size
 
     def update(self, h):
@@ -43,6 +43,13 @@ class Block(pygame.sprite.Sprite):
         if self.check_collide(colliders):
             self.rect.x += self.cell_size
             self.fill_rects()
+
+    def instant_fall(self, horizontal_colliders):
+        speed = self.speed
+        self.speed = 100
+        while not self.is_ground:
+            self.update(horizontal_colliders)
+        self.speed = speed
 
     def rotation(self, colliders):
         cords = numpy.array(self.cords)
