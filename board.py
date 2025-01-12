@@ -52,9 +52,10 @@ class Board(pygame.sprite.Sprite):
                                      (x + 5, y + 5,
                                       30, 30), 5)
 
-                pygame.draw.rect(screen, (255, 255, 255),
-                                 (self.left + j * self.cell_size, self.top + i * self.cell_size,
-                                  self.cell_size, self.cell_size), 1)
+                if i > 1:
+                    pygame.draw.rect(screen, (255, 255, 255),
+                                     (self.left + j * self.cell_size, self.top + i * self.cell_size,
+                                      self.cell_size, self.cell_size), 1)
                 # 660 80
         font = pygame.font.SysFont(None, 32)
         img = font.render('SCORE:', 1, (255, 255, 255))
@@ -110,8 +111,8 @@ class Board(pygame.sprite.Sprite):
 
     def fall_block_after_fill_lines(self, y, count):
         # роняем блоки при заполнении линий
-        board = copy.deepcopy(self.board)
         for index in range(count):
+            board = copy.deepcopy(self.board)
             for i in range(y[index], 0, -1):
                 self.board[i] = board[i - 1]
 

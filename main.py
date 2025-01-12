@@ -5,7 +5,7 @@ import pygame
 from blocks import *
 from board import Board
 
-SIZE = WIDTH, HEIGHT = 800, 800
+SIZE = WIDTH, HEIGHT = 900, 900
 FPS = 60
 
 BLOCKS = [ZBlock, SBlock, IBlock, LBlock, TBlock, JBlock, OBlock]
@@ -17,6 +17,7 @@ def colliders_clear(vertical_borders, horizontal_borders):
 
 
 def spawn_new_block(block=None):
+    defeat = False
     index = random.randint(0, 6)
     # если у нас есть блок, то оставим его снизу
     if block:
@@ -24,11 +25,12 @@ def spawn_new_block(block=None):
         for rect in block.rects:
             x, y = rect.center
             cell = board.get_cell((x, y))
-            if cell:
-                board.create_block(cell)
-            else:
-                return False
-    block = BLOCKS[index](left, top - 120, cell_size)
+            board.create_block(cell)
+            if cell[1] < 2:
+                defeat = True
+        if defeat:
+            return False
+    block = BLOCKS[index](left, top, cell_size)
     return block
 
 
@@ -40,21 +42,21 @@ if __name__ == '__main__':
     clock = pygame.time.Clock()
     running = True
 
-    board = Board(10, 19)
+    board = Board(10, 21)
     cell_size = 40
 
     defeat = False
     tetris_game_running = True
     start_menu = False
 
-    cell_height = 19
+    cell_height = 21
     cell_width = 10
     vertical_borders = []
     horizontal_borders = []
     all_group = pygame.sprite.Group()
 
     left = (WIDTH - (cell_width * cell_size)) // 2
-    top = (HEIGHT - (cell_height * cell_size)) // 2
+    top = (HEIGHT - (cell_height * cell_size)) // 2 - 30
 
     board.set_view(left, top, cell_size, vertical_borders, horizontal_borders)
     block = spawn_new_block()
@@ -100,7 +102,6 @@ if __name__ == '__main__':
             pass
 
         elif tetris_game_running:
-            print('gaming')
 
             block.draw(screen)
             block.update(horizontal_borders)
