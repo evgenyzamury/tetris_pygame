@@ -1,7 +1,7 @@
-import pygame
 import random
-from board import Board
+
 from blocks import *
+from board import Board
 
 SIZE = WIDTH, HEIGHT = 800, 800
 FPS = 60
@@ -70,8 +70,12 @@ if __name__ == '__main__':
                 if event.key == pygame.K_DOWN:
                     block.speed = 4
 
+            elif event.type == pygame.MOUSEMOTION:
+                print(event.pos)
+
         if block.is_ground:
             block = spawn_new_block(block)
+            board.check_fill_line()
 
         board.render(screen)
 
