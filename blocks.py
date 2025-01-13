@@ -44,7 +44,10 @@ class IBlock(Block):
         self.rect = self.image.get_rect()
         self.rect.x = left + cell_size * 3
         self.rect.y = top
-        self.cords = [[1, 1, 1, 1]]
+        self.cords = [[0, 0, 0, 0],
+                      [0, 0, 0, 0],
+                      [1, 1, 1, 1],
+                      [0, 0, 0, 0]]
 
 
 class LBlock(Block):

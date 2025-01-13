@@ -5,15 +5,14 @@ import pygame
 from blocks import *
 from board import Board
 
-SIZE = WIDTH, HEIGHT = 900, 900
+SIZE = WIDTH, HEIGHT = 800, 900
 FPS = 60
 
 BLOCKS = [ZBlock, SBlock, IBlock, LBlock, TBlock, JBlock, OBlock]
 
 
-def colliders_clear(vertical_borders, horizontal_borders):
-    vertical_borders.clear()
-    horizontal_borders.clear()
+def colliders_clear(colliders):
+    colliders.clear()
 
 
 def spawn_new_block(block=None):
@@ -22,12 +21,14 @@ def spawn_new_block(block=None):
     # если у нас есть блок, то оставим его снизу
     if block:
         # переберём все ректы и поставим их в сетке
+        color_index = block.color_index
         for rect in block.rects:
             x, y = rect.center
             cell = board.get_cell((x, y))
-            board.create_block(cell)
-            if cell[1] < 2:
+            board.create_block(cell, color_index)
+            if cell[1] < 2:  # проверяем есть ли блок выше игрового поля
                 defeat = True
+                # если да, мы проиграли
         if defeat:
             return False
     block = BLOCKS[index](left, top, cell_size)
@@ -51,18 +52,17 @@ if __name__ == '__main__':
 
     cell_height = 21
     cell_width = 10
-    vertical_borders = []
-    horizontal_borders = []
+    colliders = []
     all_group = pygame.sprite.Group()
 
     left = (WIDTH - (cell_width * cell_size)) // 2
     top = (HEIGHT - (cell_height * cell_size)) // 2 - 30
 
-    board.set_view(left, top, cell_size, vertical_borders, horizontal_borders)
+    board.set_view(left, top, cell_size, colliders)
     block = spawn_new_block()
 
     while running:
-        board.update(vertical_borders, horizontal_borders)
+        board.update(colliders)
         screen.fill((0, 0, 0))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -72,13 +72,13 @@ if __name__ == '__main__':
                 if key[pygame.K_DOWN]:
                     block.speed = 20
                 if event.key == pygame.K_RIGHT:
-                    block.move_right(vertical_borders)
+                    block.move_right(colliders)
                 if event.key == pygame.K_LEFT:
-                    block.move_left(vertical_borders)
+                    block.move_left(colliders)
                 if event.key == pygame.K_UP:
-                    block.rotation(vertical_borders)
+                    block.rotation(colliders)
                 if event.key == pygame.K_SPACE:
-                    block.instant_fall(horizontal_borders)
+                    block.instant_fall(colliders)
             elif tetris_game_running and event.type == pygame.KEYUP:
                 if event.key == pygame.K_DOWN:
                     block.speed = 4
@@ -104,16 +104,16 @@ if __name__ == '__main__':
         elif tetris_game_running:
 
             block.draw(screen)
-            block.update(horizontal_borders)
+            block.update(colliders)
 
             all_group.draw(screen)
-            all_group.update(vertical_borders, horizontal_borders)
+            all_group.update(colliders)
         elif defeat:
             print('defeats')
             # отрисовка поражения
             pass
 
-        colliders_clear(vertical_borders, horizontal_borders)
+        colliders_clear(colliders)
         clock.tick(FPS)
         pygame.display.flip()
     pygame.quit()

@@ -1,6 +1,7 @@
 import copy
 import pygame
 from pprint import pprint
+from variables import COLOR
 
 
 class Board(pygame.sprite.Sprite):
@@ -18,13 +19,13 @@ class Board(pygame.sprite.Sprite):
         self.color_step = None
         self.score = 0
 
-    def set_view(self, left, top, cell_size, vertical_borders, horizontal_borders):  # настройка внешнего вида
+    def set_view(self, left, top, cell_size, colliders):  # настройка внешнего вида
         self.left = left
         self.top = top
         self.cell_size = cell_size
-        self.create_borders(vertical_borders, horizontal_borders)
+        self.create_borders(colliders)
 
-    def create_borders(self, vertical_borders, horizontal_borders):
+    def create_borders(self, colliders):
         # делаем стенки нашего поля, левое - правое - нижнее
         x1, y1 = self.left, self.top
         x2, y2 = self.left + (self.width * self.cell_size), self.top + (self.height * self.cell_size)
@@ -33,29 +34,32 @@ class Board(pygame.sprite.Sprite):
         right_rect = pygame.Rect(x2, y1 - 100, 50, self.cell_size * self.height + 100)
         # создадим rect для нижней границы
         horizontal_rect = pygame.Rect(x1, y2, self.width * self.cell_size, 40)
-        vertical_borders.append(left_rect)
-        vertical_borders.append(right_rect)
-        horizontal_borders.append(horizontal_rect)
+        colliders.append(left_rect)
+        colliders.append(right_rect)
+        colliders.append(horizontal_rect)
 
     def render(self, screen):
         # отрисовка нашего игрового поля
+        w = h = self.cell_size
         for i, line in enumerate(self.board):
             for j, elem in enumerate(line):
                 x = self.left + self.cell_size * j
                 y = self.top + self.cell_size * i
-                if elem == 0:
-                    pygame.draw.rect(screen, (0, 0, 0),
-                                     (self.left + j * self.cell_size, self.top + i * self.cell_size,
-                                      self.cell_size, self.cell_size), 0)
-                elif elem == 1:
-                    pygame.draw.rect(screen, (255, 255, 255),
-                                     (x + 5, y + 5,
-                                      30, 30), 5)
 
                 if i > 1:
-                    pygame.draw.rect(screen, (255, 255, 255),
+                    pygame.draw.rect(screen, '#808080',
                                      (self.left + j * self.cell_size, self.top + i * self.cell_size,
                                       self.cell_size, self.cell_size), 1)
+
+                if elem:
+                    color_index = elem - 1
+                    pygame.draw.rect(screen, COLOR[color_index][0], (x, y, w, h), 0)
+                    pygame.draw.rect(screen, COLOR[color_index][1], (x + 10, y + 10, w - 20, h - 20), 2)
+                    pygame.draw.line(screen, COLOR[color_index][2], (x, y + h - 1), (x + w, y + h - 1), 2)
+                    pygame.draw.line(screen, COLOR[color_index][2], (x + w - 1, y), (x + w - 1, y + h), 2)
+                    pygame.draw.line(screen, COLOR[color_index][3], (x, y + 1), (x + w, y + 1), 2)
+                    pygame.draw.line(screen, COLOR[color_index][3], (x + 1, y), (x + 1, y + h), 2)
+
                 # 660 80
         font = pygame.font.SysFont(None, 32)
         img = font.render('SCORE:', 1, (255, 255, 255))
@@ -63,9 +67,9 @@ class Board(pygame.sprite.Sprite):
         screen.blit(img, (660, 80))
         screen.blit(img_score, (660, 110))
 
-    def update(self, vertical_borders, horizontal_borders):
+    def update(self, colliders):
         # функция для обновления списка коллайдеров
-        self.create_borders(vertical_borders, horizontal_borders)
+        self.create_borders(colliders)
         for i, line in enumerate(self.board):
             for j, elem in enumerate(line):
                 # если элемент не пустой создаём коллайдер
@@ -73,8 +77,7 @@ class Board(pygame.sprite.Sprite):
                     x = self.cell_size * j + self.left
                     y = self.cell_size * i + self.top
                     rect = pygame.Rect(x, y, self.cell_size, self.cell_size)
-                    vertical_borders.append(rect)
-                    horizontal_borders.append(rect)
+                    colliders.append(rect)
 
     def get_cell(self, pos):
         # узнаем клетку поля по координатам окна
@@ -88,11 +91,11 @@ class Board(pygame.sprite.Sprite):
             return x, y
         return None
 
-    def create_block(self, cell):
+    def create_block(self, cell, color_index):
         # создаем блок на поле
         x = cell[0]
         y = cell[1]
-        self.board[y][x] = 1
+        self.board[y][x] = color_index
 
     def check_fill_line(self):
         count_lines = 0

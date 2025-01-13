@@ -1,8 +1,11 @@
 import pygame
+import random
 import numpy
+from variables import COLOR
 
 
 class Block(pygame.sprite.Sprite):
+
     def __init__(self, cell_size):
         super().__init__()
         self.speed = 2
@@ -10,6 +13,14 @@ class Block(pygame.sprite.Sprite):
         self.is_ground = False
         self.rects = []
         self.cords = []
+
+        self.color_index = random.randint(0, 6)
+        self.main_color = COLOR[self.color_index][0]
+        self.inside_color = COLOR[self.color_index][1]
+        self.bottom_color = COLOR[self.color_index][2]
+        self.top_color = COLOR[self.color_index][3]
+        self.color_index += 1
+
         self.rect = pygame.Rect((100, 100, 100, 100))
         self.cell_size = cell_size
 
@@ -33,14 +44,14 @@ class Block(pygame.sprite.Sprite):
     def move_right(self, colliders):
         self.rect.x += self.cell_size
         self.fill_rects()
-        if self.check_collide(colliders):
+        if self.check_collide(colliders) or self.is_ground:
             self.rect.x -= self.cell_size
             self.fill_rects()
 
     def move_left(self, colliders):
         self.rect.x -= self.cell_size
         self.fill_rects()
-        if self.check_collide(colliders):
+        if self.check_collide(colliders) or self.is_ground:
             self.rect.x += self.cell_size
             self.fill_rects()
 
@@ -62,7 +73,14 @@ class Block(pygame.sprite.Sprite):
 
     def draw(self, screen):
         for rect in self.rects:
-            pygame.draw.rect(screen, (255, 255, 255), rect, 5)
+            x, y = rect.x, rect.y
+            w, h = rect.width, rect.height
+            pygame.draw.rect(screen, self.main_color, (x, y, w, h), 0)
+            pygame.draw.rect(screen, self.inside_color, (x + 10, y + 10, w - 20, h - 20), 2)
+            pygame.draw.line(screen, self.bottom_color, (x, y + h - 1), (x + w, y + h - 1), 2)
+            pygame.draw.line(screen, self.bottom_color, (x + w - 1, y), (x + w - 1, y + h), 2)
+            pygame.draw.line(screen, self.top_color, (x, y + 1), (x + w, y + 1), 2)
+            pygame.draw.line(screen, self.top_color, (x + 1, y), (x + 1, y + h), 2)
 
     def check_collide(self, collider_list):
         for rect in self.rects:
@@ -74,8 +92,9 @@ class Block(pygame.sprite.Sprite):
     def fill_rects(self):
         self.rects = []
         x, y = self.rect.topleft
-        x, y = x + 5, y + 5
         for ky, cords in enumerate(self.cords):
             for kx, block in enumerate(cords):
                 if block:
-                    self.rects.append(pygame.Rect(x + kx * self.cell_size, y + ky * self.cell_size, 30, 30))
+                    self.rects.append(
+                        pygame.Rect(x + kx * self.cell_size, y + ky * self.cell_size, self.cell_size, self.cell_size)
+                    )
