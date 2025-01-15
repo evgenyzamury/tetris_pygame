@@ -8,3 +8,5 @@ COLOR = [['#c34046', '#b33a41', '#69262a', '#d1686e'],  # red
          ]
 
 SHADOW_COLOR = '#00DF00'
+
+WIDTH, HEIGHT = 800, 900

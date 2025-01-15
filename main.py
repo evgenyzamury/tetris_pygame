@@ -23,8 +23,6 @@ def gameplay():
     block.shadow(screen, colliders)
     block.draw(screen)
 
-    all_group.update(colliders)
-
 
 def show_defeat():
     board.render(screen)
@@ -53,7 +51,7 @@ def spawn_new_block(block=None):
                 # если да, мы проиграли
         if defeat:
             return False
-    block = BLOCKS[index](left, top, cell_size, speed)
+    block = BLOCKS[index](all_group, left, top, cell_size, speed)
     return block
 
 
@@ -94,7 +92,7 @@ if __name__ == '__main__':
     pos = 0, 0
 
     while running:
-        board.update(colliders)
+        board.update(colliders)  # заполняем коллайдеры, без этого не будут работать столкновения
         screen.fill((0, 0, 0))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -151,12 +149,14 @@ if __name__ == '__main__':
         if start_menu:
             # отрисовка начального меню
             main_menu()
-            pass
 
         elif tetris_game_running:
+            board.update(colliders)
+            # отрисовка игры
             gameplay()
 
         elif defeat:
+            # отрисовка поражения
             show_defeat()
 
         colliders.clear()
