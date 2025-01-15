@@ -23,14 +23,17 @@ def gameplay():
     block.shadow(screen, colliders)  # находим и рисуем тень активного блока(подсказка куда он падает)
     block.draw(screen)  # рисуем активный блок
     show_next_block()  # показываем следующий блок который появиться активным
+    show_time(pygame.time.get_ticks())
 
 
 def show_defeat():
-    board.render(screen)
-    restart_button.check_hover(pos)
-    restart_button.draw(screen)
-    exit_to_main_menu.check_hover(pos)
-    exit_to_main_menu.draw(screen)
+    board.render(screen)  # показываем основное поле с блоками
+    show_time(end_time)  # показываем время игры
+    restart_button.check_hover(pos)  # проверяем наводку курсора на кнопку
+    restart_button.draw(screen)  # рисуем кнопку перезапуска на экране
+    exit_to_main_menu.check_hover(pos)  # проверяем наводку курсора на кнопку
+    exit_to_main_menu.draw(screen)  # рисуем кнопку выхода в главное меню на экране
+    # создаём и рисуем надпись проигрыша
     font = pygame.font.SysFont(None, 100)
     img = font.render('you lose!', 1, (255, 255, 255), '#34495e')
     screen.blit(img, (WIDTH // 2 - img.get_width() // 2, HEIGHT // 2 - img.get_height()))
@@ -67,6 +70,17 @@ def show_next_block():
     color_index = spawn_block_list[1][1]
     show_block = BLOCKS[block_index](all_group, 600, 300, 20, 0, color_index)
     show_block.draw(screen)
+
+
+def show_time(ticks):
+    font = pygame.font.SysFont(None, 30)
+    time = (ticks - start_time) // 1000
+    time = f'{time // 60:02d}:' + f'{time % 60:02d}'
+    img_time = font.render(time, 1, (255, 255, 255))
+    img_time_text = font.render('Time', 1, (255, 255, 255))
+
+    screen.blit(img_time_text, (660, 140))
+    screen.blit(img_time, (670 + img_time_text.get_width(), 140))
 
 
 if __name__ == '__main__':
@@ -138,11 +152,13 @@ if __name__ == '__main__':
                     tetris_game_running = True
                     board.clear()
                     block, spawn_block_list = spawn_new_block(spawn_block_list=spawn_block_list)
+                    start_time = pygame.time.get_ticks()
                 elif event.button == restart_button:
                     start_menu = False
                     tetris_game_running = True
                     board.clear()
                     block, spawn_block_list = spawn_new_block(spawn_block_list=spawn_block_list)
+                    start_time = pygame.time.get_ticks()
                 elif event.button == exit_to_main_menu:
                     start_menu = True
                     tetris_game_running = False
@@ -156,10 +172,12 @@ if __name__ == '__main__':
         if tetris_game_running and block.is_ground:
             block, spawn_block_list = spawn_new_block(block, spawn_block_list)
             if block:
-                board.check_fill_line()
+                board.check_fill_line()  # проверяем линии на заполненность
             else:
+                # если мы проиграли
                 defeat = True
                 tetris_game_running = False
+                end_time = pygame.time.get_ticks()
 
         if start_menu:
             # отрисовка начального меню

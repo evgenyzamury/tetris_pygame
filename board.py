@@ -18,8 +18,6 @@ class Board(pygame.sprite.Sprite):
         self.first_step = True
         self.color_step = None
         self.score = 0
-        self.time = 0
-        self.tick = 0
 
     def set_view(self, left, top, cell_size, colliders):  # настройка внешнего вида
         self.left = left
@@ -66,21 +64,11 @@ class Board(pygame.sprite.Sprite):
         font = pygame.font.SysFont(None, 32)
         img = font.render('SCORE:', 1, (255, 255, 255))
         img_score = font.render(f'{self.score}', 1, (255, 255, 255))
-        time = f'{self.time // 60:02d}:' + f'{self.time % 60:02d}'
-        img_time = font.render(time, 1, (255, 255, 255))
-        img_time_text = font.render('Time', 1, (255, 255, 255))
-
-        screen.blit(img_time_text, (660, 140))
-        screen.blit(img_time, (670 + img_time_text.get_width(), 140))
 
         screen.blit(img, (660, 80))
         screen.blit(img_score, (660, 110))
 
     def update(self, colliders):
-        self.tick += 1 / 60
-        if self.tick >= 1:
-            self.tick = 0
-            self.time += 1
         # функция для обновления списка коллайдеров
         self.create_borders(colliders)
         for i, line in enumerate(self.board):
