@@ -18,10 +18,11 @@ def main_menu():
 
 
 def gameplay():
-    board.render(screen)
-    block.update(colliders)
-    block.shadow(screen, colliders)
-    block.draw(screen)
+    board.render(screen)  # рисуем поле тетриса
+    block.update(colliders)  # обновляем блок, проверяем на падение
+    block.shadow(screen, colliders)  # находим и рисуем тень активного блока(подсказка куда он падает)
+    block.draw(screen)  # рисуем активный блок
+    show_next_block()  # показываем следующий блок который появиться активным
 
 
 def show_defeat():
@@ -35,13 +36,14 @@ def show_defeat():
     screen.blit(img, (WIDTH // 2 - img.get_width() // 2, HEIGHT // 2 - img.get_height()))
 
 
-def spawn_new_block(block=None):
+def spawn_new_block(block=None, spawn_block_list=None):
     defeat = False
-    index = random.randint(0, 6)
     # если у нас есть блок, то оставим его снизу
     if block:
         # переберём все ректы и поставим их в сетке
-        color_index = block.color_index
+        color_index = spawn_block_list[0][1] + 1
+        spawn_block_list = spawn_block_list[1::]
+        spawn_block_list.append((random.randint(0, 6), random.randint(0, 6)))
         for rect in block.rects:
             x, y = rect.center
             cell = board.get_cell((x, y))
@@ -50,9 +52,21 @@ def spawn_new_block(block=None):
                 defeat = True
                 # если да, мы проиграли
         if defeat:
-            return False
-    block = BLOCKS[index](all_group, left, top, cell_size, speed)
-    return block
+            return False, spawn_block_list
+    block_index = spawn_block_list[0][0]  # определяем какой блок заспавниться
+    color_index = spawn_block_list[0][1]  # определяем цвет блока
+    block = BLOCKS[block_index](all_group, left, top, cell_size, speed, color_index)
+    return block, spawn_block_list
+
+
+def show_next_block():
+    font = pygame.font.SysFont(None, 30)
+    img_text = font.render('Next: ', 1, (255, 255, 255))
+    screen.blit(img_text, (670, 250))
+    block_index = spawn_block_list[1][0]
+    color_index = spawn_block_list[1][1]
+    show_block = BLOCKS[block_index](all_group, 600, 300, 20, 0, color_index)
+    show_block.draw(screen)
 
 
 if __name__ == '__main__':
@@ -78,6 +92,7 @@ if __name__ == '__main__':
     board.set_view(left, top, cell_size, colliders)
 
     speed = 2
+    spawn_block_list = [(random.randint(0, 6), random.randint(0, 6)), (random.randint(0, 6), random.randint(0, 6))]
 
     width = 260
     height = 80
@@ -122,12 +137,12 @@ if __name__ == '__main__':
                     start_menu = False
                     tetris_game_running = True
                     board.clear()
-                    block = spawn_new_block()
+                    block, spawn_block_list = spawn_new_block(spawn_block_list=spawn_block_list)
                 elif event.button == restart_button:
                     start_menu = False
                     tetris_game_running = True
                     board.clear()
-                    block = spawn_new_block()
+                    block, spawn_block_list = spawn_new_block(spawn_block_list=spawn_block_list)
                 elif event.button == exit_to_main_menu:
                     start_menu = True
                     tetris_game_running = False
@@ -139,7 +154,7 @@ if __name__ == '__main__':
                 exit_to_main_menu.handle_event(event)
 
         if tetris_game_running and block.is_ground:
-            block = spawn_new_block(block)
+            block, spawn_block_list = spawn_new_block(block, spawn_block_list)
             if block:
                 board.check_fill_line()
             else:
@@ -151,7 +166,6 @@ if __name__ == '__main__':
             main_menu()
 
         elif tetris_game_running:
-            board.update(colliders)
             # отрисовка игры
             gameplay()
 

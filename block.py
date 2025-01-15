@@ -8,7 +8,7 @@ from variables import COLOR, SHADOW_COLOR
 
 class Block(pygame.sprite.Sprite):
 
-    def __init__(self, all_group, cell_size, speed):
+    def __init__(self, all_group, cell_size, speed, color_index):
         super().__init__(all_group)
         self.speed = speed
         self.tick = 0
@@ -17,7 +17,7 @@ class Block(pygame.sprite.Sprite):
         self.rects = []
         self.cords = []
 
-        self.color_index = random.randint(0, 6)
+        self.color_index = color_index
         self.main_color = COLOR[self.color_index][0]
         self.inside_color = COLOR[self.color_index][1]
         self.bottom_color = COLOR[self.color_index][2]
