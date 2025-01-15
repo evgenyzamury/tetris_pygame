@@ -121,3 +121,6 @@ class Board(pygame.sprite.Sprite):
 
     def add_points(self, count_lines):
         self.score += 1000 * count_lines
+
+    def clear(self):
+        self.board = [[0] * self.width for _ in range(self.height)]
