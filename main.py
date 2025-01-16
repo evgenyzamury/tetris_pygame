@@ -118,6 +118,30 @@ def show_time(ticks):
     screen.blit(img_time, (670 + img_time_text.get_width(), 140))
 
 
+def save_result_in_db(score, time):
+    con = sqlite3.connect('data/tetris.db')
+    cur = con.cursor()
+    query = """SELECT * FROM stats INNER JOIN players on players.id = stats.player_id
+                    WHERE player = (SELECT player FROM players WHERE active_player = 1)"""
+    result = cur.execute(query).fetchone()
+    best_score = result[1]
+    all_score = result[2] + score
+    all_time = result[3] + time
+    if score > best_score:
+        best_score = score
+    query = """UPDATE
+            stats
+        SET
+            best_score = ?,
+            all_score = ?,
+            play_time = ?
+        WHERE player_id = (SELECT id FROM players WHERE active_player = 1)"""
+    cur.execute(query, (best_score, all_score, all_time))
+    con.commit()
+    con.close()
+    print('данные в бд сохранены', best_score, all_score, all_time)
+
+
 if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode(SIZE)
@@ -196,6 +220,7 @@ if __name__ == '__main__':
                     block, spawn_block_list = spawn_new_block(spawn_block_list=spawn_block_list)
                     start_time = pygame.time.get_ticks()
 
+
                 elif event.button == stats_button:
                     statistics_menu = True
 
@@ -231,6 +256,7 @@ if __name__ == '__main__':
                 defeat = True
                 tetris_game_running = False
                 end_time = pygame.time.get_ticks()
+                save_result_in_db(board.score, (end_time - start_time) // 1000)
 
         if start_menu:
             if statistics_menu:

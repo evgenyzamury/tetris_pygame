@@ -125,3 +125,4 @@ class Board(pygame.sprite.Sprite):
 
     def clear(self):
         self.board = [[0] * self.width for _ in range(self.height)]
+        self.score = 0
