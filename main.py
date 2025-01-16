@@ -1,4 +1,5 @@
 import random
+import sqlite3
 
 import pygame
 
@@ -15,6 +16,40 @@ BLOCKS = [ZBlock, SBlock, IBlock, LBlock, TBlock, JBlock, OBlock]
 def main_menu():
     start_button.check_hover(pos)
     start_button.draw(screen)
+    stats_button.check_hover(pos)
+    stats_button.draw(screen)
+
+
+def show_statistics():
+    con = sqlite3.connect('data/tetris.db')
+    cur = con.cursor()
+    query = """SELECT * FROM stats INNER JOIN players on players.id = stats.player_id
+                WHERE player = (SELECT player FROM players WHERE active_player = 1)"""
+    result = cur.execute(query).fetchone()
+    con.close()
+    exit_to_main_menu.check_hover(pos, (WIDTH * 0.05, HEIGHT * 0.05))
+    exit_to_main_menu.draw(screen, (WIDTH * 0.05, HEIGHT * 0.05))
+    font = pygame.font.SysFont(None, 40)
+    img_best_score = font.render('Best score', 1, '#03dac6', (0, 0, 0))
+    img_best_score_amount = font.render(str(result[1]), 1, '#03dac6')
+    img_all_score = font.render('All score', 1, '#03dac6', (0, 0, 0))
+    img_all_score_amount = font.render(str(result[2]), 1, '#03dac6')
+    img_play_time = font.render('Play time (min)', 1, '#03dac6', (0, 0, 0))
+    img_play_time_amount = font.render(str(result[3]), 1, '#03dac6')
+
+    screen.blit(img_best_score, (40, HEIGHT // 2 - (img_best_score.get_height() * 2)))
+    screen.blit(img_best_score_amount,
+                (40 - img_best_score_amount.get_width() + img_best_score.get_width() // 2, HEIGHT // 2))
+
+    screen.blit(img_all_score,
+                (WIDTH // 2 - img_all_score.get_width() // 2, HEIGHT // 2 - (img_all_score.get_height() * 2)))
+    screen.blit(img_all_score_amount,
+                ((WIDTH // 2 - img_all_score_amount.get_width() // 2), HEIGHT // 2))
+
+    screen.blit(img_play_time,
+                (WIDTH - 40 - img_play_time.get_width(), HEIGHT // 2 - img_play_time_amount.get_height() * 2))
+    screen.blit(img_play_time_amount,
+                (WIDTH - 40 - img_play_time.get_width() // 2, HEIGHT // 2))
 
 
 def gameplay():
@@ -91,9 +126,11 @@ if __name__ == '__main__':
     clock = pygame.time.Clock()
     running = True
 
-    defeat = False
-    tetris_game_running = False
     start_menu = True
+    statistics_menu = False
+    tetris_game_running = False
+    defeat = False
+    statistical_data_received = False
 
     board = Board(10, 21)
     cell_size = 40
@@ -112,11 +149,16 @@ if __name__ == '__main__':
     height = 80
     start_button = ColorButton(WIDTH // 2 - width // 2, (HEIGHT // 2 - height // 2) - 150, width, height,
                                'start game', 'black', hover_color='gray', text_size=40)
+    stats_button = ColorButton(WIDTH // 2 - width // 2, (HEIGHT // 2 - height // 2) - 50, width, height,
+                               'stats', 'black', hover_color='gray', text_size=40)
+    #
+    # back_button_in_statistic = ColorButton(WIDTH * 0.05, HEIGHT * 0.05, width, height,
+    #                                        'Back', 'black', hover_color='gray', text_size=40)
 
     restart_button = ColorButton(WIDTH // 2 - width // 2, (HEIGHT // 2 - height // 2) + 120, width, height,
                                  'Restart game', '#34495e', hover_color='gray', text_size=40)
     exit_to_main_menu = ColorButton(WIDTH // 2 - width // 2, (HEIGHT // 2 - height // 2) + 220, width, height,
-                                    'go to menu', '#34495e', hover_color='gray', text_size=40)
+                                    'exit to menu', '#34495e', hover_color='gray', text_size=40)
 
     pos = 0, 0
 
@@ -153,18 +195,29 @@ if __name__ == '__main__':
                     board.clear()
                     block, spawn_block_list = spawn_new_block(spawn_block_list=spawn_block_list)
                     start_time = pygame.time.get_ticks()
+
+                elif event.button == stats_button:
+                    statistics_menu = True
+
                 elif event.button == restart_button:
                     start_menu = False
                     tetris_game_running = True
                     board.clear()
                     block, spawn_block_list = spawn_new_block(spawn_block_list=spawn_block_list)
                     start_time = pygame.time.get_ticks()
+
                 elif event.button == exit_to_main_menu:
                     start_menu = True
                     tetris_game_running = False
+                    statistics_menu = False
 
             if start_menu:
-                start_button.handle_event(event)
+                if statistics_menu:  # если мы в статистике
+                    exit_to_main_menu.handle_event(event)
+                else:
+                    stats_button.handle_event(event)
+                    start_button.handle_event(event)
+
             elif defeat:
                 restart_button.handle_event(event)
                 exit_to_main_menu.handle_event(event)
@@ -180,12 +233,16 @@ if __name__ == '__main__':
                 end_time = pygame.time.get_ticks()
 
         if start_menu:
-            # отрисовка начального меню
-            main_menu()
+            if statistics_menu:
+                show_statistics()
+            else:
+                # отрисовка начального меню
+                main_menu()
 
         elif tetris_game_running:
             # отрисовка игры
             gameplay()
+
 
         elif defeat:
             # отрисовка поражения
