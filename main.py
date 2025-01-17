@@ -35,7 +35,7 @@ def show_statistics():
     img_all_score = font.render('All score', 1, '#03dac6', (0, 0, 0))
     img_all_score_amount = font.render(str(result[2]), 1, '#03dac6')
     img_play_time = font.render('Play time (min)', 1, '#03dac6', (0, 0, 0))
-    img_play_time_amount = font.render(str(result[3]), 1, '#03dac6')
+    img_play_time_amount = font.render(str(result[3] // 60), 1, '#03dac6')
 
     screen.blit(img_best_score, (40, HEIGHT // 2 - (img_best_score.get_height() * 2)))
     screen.blit(img_best_score_amount,
@@ -70,7 +70,7 @@ def show_defeat():
     exit_to_main_menu.draw(screen)  # рисуем кнопку выхода в главное меню на экране
     # создаём и рисуем надпись проигрыша
     font = pygame.font.SysFont(None, 100)
-    img = font.render('you lose!', 1, (255, 255, 255), '#34495e')
+    img = font.render('You lose!', 1, (255, 255, 255), '#34495e')
     screen.blit(img, (WIDTH // 2 - img.get_width() // 2, HEIGHT // 2 - img.get_height()))
 
 
@@ -214,17 +214,18 @@ if __name__ == '__main__':
 
             elif event.type == pygame.USEREVENT:
                 if event.button == start_button:
+                    defeat = False
                     start_menu = False
                     tetris_game_running = True
                     board.clear()
                     block, spawn_block_list = spawn_new_block(spawn_block_list=spawn_block_list)
                     start_time = pygame.time.get_ticks()
 
-
                 elif event.button == stats_button:
                     statistics_menu = True
 
                 elif event.button == restart_button:
+                    defeat = False
                     start_menu = False
                     tetris_game_running = True
                     board.clear()
@@ -232,6 +233,7 @@ if __name__ == '__main__':
                     start_time = pygame.time.get_ticks()
 
                 elif event.button == exit_to_main_menu:
+                    defeat = False
                     start_menu = True
                     tetris_game_running = False
                     statistics_menu = False
@@ -268,7 +270,6 @@ if __name__ == '__main__':
         elif tetris_game_running:
             # отрисовка игры
             gameplay()
-
 
         elif defeat:
             # отрисовка поражения
