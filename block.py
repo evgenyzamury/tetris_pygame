@@ -8,8 +8,8 @@ from variables import COLOR, SHADOW_COLOR
 
 class Block(pygame.sprite.Sprite):
 
-    def __init__(self, all_group, cell_size, speed, color_index):
-        super().__init__(all_group)
+    def __init__(self, cell_size, speed, color_index):
+        super().__init__()
         self.speed = speed
         self.tick = 0
         self.is_ground = False
