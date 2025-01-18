@@ -1,7 +1,7 @@
 import copy
 import pygame
 from pprint import pprint
-from variables import COLOR
+from variables import COLOR, WIDTH, HEIGHT
 
 
 class Board(pygame.sprite.Sprite):
@@ -64,6 +64,7 @@ class Board(pygame.sprite.Sprite):
         font = pygame.font.SysFont(None, 32)
         img = font.render('SCORE:', 1, (255, 255, 255))
         img_score = font.render(f'{self.score}', 1, (255, 255, 255))
+
         screen.blit(img, (660, 80))
         screen.blit(img_score, (660, 110))
 
@@ -121,3 +122,7 @@ class Board(pygame.sprite.Sprite):
 
     def add_points(self, count_lines):
         self.score += 1000 * count_lines
+
+    def clear(self):
+        self.board = [[0] * self.width for _ in range(self.height)]
+        self.score = 0
