@@ -59,15 +59,14 @@ def spawn_new_block(block=None, spawn_block_list=None):
 
 
 def show_next_block():
+    x, y = 670, 250
     font = pygame.font.SysFont(None, 30)
     img_text = font.render('Next: ', 1, (255, 255, 255))
-    screen.blit(img_text, (670, 250))
+    screen.blit(img_text, (x, y))
     block_index = spawn_block_list[1][0]
     color_index = spawn_block_list[1][1]
-    show_block = BLOCKS[block_index](600, 300, 20, 0, color_index)
-    print(show_block)
+    show_block = BLOCKS[block_index](x - 70, y + 50, 20, 0, color_index)
     show_block.draw(screen)
-    print(show_block)
 
 
 def get_button_action(self, event):
