@@ -59,7 +59,7 @@ def spawn_new_block(block=None, spawn_block_list=None):
     return block, spawn_block_list
 
 
-def show_next_block():
+def show_next_block():  # показывает следующий блок который заспавнится
     x, y = 670, 250
     font = pygame.font.SysFont(None, 30)
     img_text = font.render('Next: ', 1, (255, 255, 255))

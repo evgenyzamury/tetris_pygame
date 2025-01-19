@@ -4,7 +4,7 @@ import sqlite3
 database_path = 'data/tetris.db'
 
 
-def get_statistic():
+def get_statistic():  # получаем статистику активного игрока из базы данных
     con = sqlite3.connect(database_path)
     cur = con.cursor()
     query = """SELECT * FROM stats INNER JOIN players on players.id = stats.player_id
@@ -18,7 +18,7 @@ def get_statistic():
     return best_score, all_score, play_time
 
 
-def save_result_in_db(score, time):
+def save_result_in_db(score, time):  # обновляем и сохраняем статистику игрока
     con = sqlite3.connect(database_path)
     cur = con.cursor()
     query = """SELECT * FROM stats INNER JOIN players on players.id = stats.player_id

@@ -30,7 +30,7 @@ class Block(pygame.sprite.Sprite):
     def __repr__(self):
         return f'Block({self.cell_size} {self.speed} {self.color_index})'
 
-    def update(self, colliders):
+    def update(self, colliders):  # функция падения блока
         self.tick += self.speed / 60
         if self.tick >= 1:
             if not self.is_ground:
@@ -49,28 +49,28 @@ class Block(pygame.sprite.Sprite):
             self.tick = 0
         self.fill_rects(self.rects)
 
-    def move_right(self, colliders):
+    def move_right(self, colliders):  # движение блока вправо
         self.rect.x += self.cell_size
         self.fill_rects(self.rects)
         if check_collide(self.rects, colliders) or self.is_ground:
             self.rect.x -= self.cell_size
             self.fill_rects(self.rects)
 
-    def move_left(self, colliders):
+    def move_left(self, colliders):  # движение блока влево
         self.rect.x -= self.cell_size
         self.fill_rects(self.rects)
         if check_collide(self.rects, colliders) or self.is_ground:
             self.rect.x += self.cell_size
             self.fill_rects(self.rects)
 
-    def instant_fall(self, horizontal_colliders):
+    def instant_fall(self, horizontal_colliders):  # мгновенное падение блока
         speed = self.speed
         self.speed = 100
         while not self.is_ground:
             self.update(horizontal_colliders)
         self.speed = speed
 
-    def rotation(self, colliders):
+    def rotation(self, colliders):  # поворачивает блок на 90 градусов
         cords = numpy.array(self.cords)
         rotate_matrix = numpy.rot90(cords)
         self.cords = rotate_matrix
@@ -79,7 +79,7 @@ class Block(pygame.sprite.Sprite):
             self.cords = cords
             self.fill_rects(self.rects)
 
-    def draw(self, screen):
+    def draw(self, screen):  # рисует блок
         for rect in self.rects:
             x, y = rect.x, rect.y
             w, h = self.cell_size, self.cell_size
@@ -90,7 +90,7 @@ class Block(pygame.sprite.Sprite):
             pygame.draw.line(screen, self.top_color, (x, y + 1), (x + w, y + 1), 2)
             pygame.draw.line(screen, self.top_color, (x + 1, y), (x + 1, y + h), 2)
 
-    def shadow(self, screen, colliders):
+    def shadow(self, screen, colliders):  # рисует тень блока(куда он падает)
         shadow_rects = copy.deepcopy(self.rects)
         while not check_collide(shadow_rects, colliders):
             for rect in shadow_rects:
@@ -100,7 +100,7 @@ class Block(pygame.sprite.Sprite):
         for rect in shadow_rects:
             pygame.draw.rect(screen, SHADOW_COLOR, rect, 3)
 
-    def fill_rects(self, rects):
+    def fill_rects(self, rects):  # обновляет (self.rects)
         rects.clear()
         x, y = self.rect.topleft
         for ky, cords in enumerate(self.cords):
@@ -111,7 +111,7 @@ class Block(pygame.sprite.Sprite):
                     )
 
 
-def check_collide(rects, collider_list):
+def check_collide(rects, collider_list):  # проверяет столкновения
     for rect in rects:
         if rect.collidelist(collider_list) != -1:
             return True

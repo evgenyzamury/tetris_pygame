@@ -23,7 +23,7 @@ class ColorButton:
         screen.blit(text_surface, (self.rect.x + (self.rect.width - text_surface.get_width()) // 2,
                                    self.rect.y + (self.rect.height - text_surface.get_height()) // 2))
 
-    def check_hover(self, pos):
+    def check_hover(self, pos):  # проверяем навились ли мы на кнопку
         if self.rect.collidepoint(pos):
             self.hover = True
         else:
