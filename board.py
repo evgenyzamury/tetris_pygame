@@ -1,7 +1,7 @@
 import copy
 import pygame
 from pprint import pprint
-from variables import COLOR, WIDTH, HEIGHT
+from variables import COLOR
 
 
 class Board(pygame.sprite.Sprite):
@@ -17,7 +17,6 @@ class Board(pygame.sprite.Sprite):
         self.step = 0
         self.first_step = True
         self.color_step = None
-        self.score = 0
 
     def set_view(self, left, top, cell_size, colliders):  # настройка внешнего вида
         self.left = left
@@ -59,14 +58,6 @@ class Board(pygame.sprite.Sprite):
                     pygame.draw.line(screen, COLOR[color_index][2], (x + w - 1, y), (x + w - 1, y + h), 2)
                     pygame.draw.line(screen, COLOR[color_index][3], (x, y + 1), (x + w, y + 1), 2)
                     pygame.draw.line(screen, COLOR[color_index][3], (x + 1, y), (x + 1, y + h), 2)
-
-                # 660 80
-        font = pygame.font.SysFont(None, 32)
-        img = font.render('SCORE:', 1, (255, 255, 255))
-        img_score = font.render(f'{self.score}', 1, (255, 255, 255))
-
-        screen.blit(img, (660, 80))
-        screen.blit(img_score, (660, 110))
 
     def update(self, colliders):
         # функция для обновления списка коллайдеров
@@ -111,7 +102,7 @@ class Board(pygame.sprite.Sprite):
             # если есть хоть 1 заполненная линия роняем блоки
             if count_lines:
                 self.fall_block_after_fill_lines(need_y, count_lines)
-                self.add_points(count_lines)
+            return count_lines
 
     def fall_block_after_fill_lines(self, y, count):
         # роняем блоки при заполнении линий
@@ -119,10 +110,3 @@ class Board(pygame.sprite.Sprite):
             board = copy.deepcopy(self.board)
             for i in range(y[index], 0, -1):
                 self.board[i] = board[i - 1]
-
-    def add_points(self, count_lines):
-        self.score += 1000 * count_lines
-
-    def clear(self):
-        self.board = [[0] * self.width for _ in range(self.height)]
-        self.score = 0

@@ -27,6 +27,9 @@ class Block(pygame.sprite.Sprite):
         self.rect = pygame.Rect((100, 100, 100, 100))
         self.cell_size = cell_size
 
+    def __repr__(self):
+        return f'Block({self.cell_size} {self.speed} {self.color_index})'
+
     def update(self, colliders):
         self.tick += self.speed / 60
         if self.tick >= 1:
@@ -79,7 +82,7 @@ class Block(pygame.sprite.Sprite):
     def draw(self, screen):
         for rect in self.rects:
             x, y = rect.x, rect.y
-            w, h = rect.width, rect.height
+            w, h = self.cell_size, self.cell_size
             pygame.draw.rect(screen, self.main_color, (x, y, w, h), 0)
             pygame.draw.rect(screen, self.inside_color, (x + 10, y + 10, w - 20, h - 20), 2)
             pygame.draw.line(screen, self.bottom_color, (x, y + h - 1), (x + w, y + h - 1), 2)
