@@ -13,7 +13,7 @@ class Board(pygame.sprite.Sprite):
         self.board = [[0] * width for _ in range(height)]
         self.left = 20
         self.top = 20
-        self.cell_size = 60
+        self.cell_size = 40
         self.step = 0
         self.first_step = True
         self.color_step = None

@@ -6,6 +6,7 @@ from Button import ColorButton
 from ui_in_game import InGameUI
 from ui_menu import MenuUI
 from settings_ui import SettingsUI
+from UI_statistik import ui_show_statistic
 
 SIZE = WIDTH, HEIGHT = 800, 900
 FPS = 60
@@ -89,6 +90,7 @@ if __name__ == '__main__':
     defeat = False
     tetris_game_running = False
     start_menu = True
+    show_statistic = False
 
     board = Board(10, 21)
     cell_size = 40

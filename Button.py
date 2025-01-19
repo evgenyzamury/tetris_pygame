@@ -24,7 +24,7 @@ class ColorButton:
                                    self.rect.y + (self.rect.height - text_surface.get_height()) // 2))
 
     def check_hover(self, pos):
-        if self.x < pos[0] < self.x + self.width and self.y < pos[1] < self.y + self.height:
+        if self.rect.collidepoint(pos):
             self.hover = True
         else:
             self.hover = False
