@@ -47,6 +47,7 @@ def spawn_new_block(block=None, spawn_block_list=None):
         color_index = spawn_block_list[0][1] + 1
         spawn_block_list = spawn_block_list[1::]
         spawn_block_list.append((random.randint(0, 6), random.randint(0, 6)))
+        block.kill()  # убираем активный блок из группы
         for rect in block.rects:
             x, y = rect.center
             cell = board.get_cell((x, y))
@@ -58,7 +59,7 @@ def spawn_new_block(block=None, spawn_block_list=None):
             return False, spawn_block_list
     block_index = spawn_block_list[0][0]  # определяем какой блок заспавниться
     color_index = spawn_block_list[0][1]  # определяем цвет блока
-    block = BLOCKS[block_index](all_group, left, top, cell_size, speed, color_index)
+    block = BLOCKS[block_index](all_group, board.rect.x, board.rect.y, cell_size, speed, color_index)
     return block, spawn_block_list
 
 
@@ -70,8 +71,8 @@ def show_next_block():  # показывает следующий блок ко�
     block_index = spawn_block_list[1][0]
     color_index = spawn_block_list[1][1]
 
-    # show_block = BLOCKS[block_index](all_group, x - 70, y + 50, 20, 0, color_index)
-    # show_block.draw(screen)
+    show_block = BLOCKS[block_index](all_group, x - 70, y + 50, 20, 0, color_index)
+    show_block.draw(screen)
 
 
 def get_button_action(self, event):
@@ -248,26 +249,26 @@ if __name__ == '__main__':
                 results_button.draw(screen)
                 quit_button.draw(screen)
             else:
-                # print(board.rect.x)
-                # if 100 < board.rect.x < 200:
-                #     dx = random.randint(-1, 1)
-                # elif 100 > board.rect.x:
-                #     dx = 1
-                # else:
-                #     dx = -1
-                #
-                # if 10 < board.rect.y < 40:
-                #     dy = random.randint(-1, 1)
-                # elif 10 > board.rect.y:
-                #     dy = 1
-                # else:
-                #     dy = -1
-                #
-                # camera.update((dx, dy))
-                # for i, sprite in enumerate(all_group):
-                #     camera.apply(sprite)
-                # pause_button.draw(screen)
+
+                dx = dy = 1
+                if 100 < board.rect.x < 300:
+                    dx = random.randint(-7, 7)
+                elif 100 > board.rect.x:
+                    dx = 12
+                else:
+                    dx = -3
+
+                if 0 < board.rect.y < 60:
+                    dy = random.randint(-7, 7)
+                elif 10 > board.rect.y:
+                    dy = 3
+                else:
+                    dy = -12
                 gameplay()
+                camera.update((dx, dy))
+                for i, sprite in enumerate(all_group):
+                    camera.apply(sprite)
+                pause_button.draw(screen)
 
         if tetris_game_running and block.is_ground:
             block, spawn_block_list = spawn_new_block(block, spawn_block_list=spawn_block_list)

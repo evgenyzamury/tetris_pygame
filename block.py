@@ -41,8 +41,6 @@ class Block(pygame.sprite.Sprite):
                         self.is_ground = True
                     else:
                         self.ground_more_time = True
-                        self.kill()
-                        print('kill')
                 else:
                     self.rect.y += self.cell_size
                 self.rect.y -= 40
