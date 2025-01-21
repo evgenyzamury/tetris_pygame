@@ -3,8 +3,8 @@ from block import Block
 
 
 class TBlock(Block):
-    def __init__(self, left, top, cell_size, speed, color_index):
-        super().__init__(cell_size, speed, color_index)
+    def __init__(self, all_group, left, top, cell_size, speed, color_index):
+        super().__init__(all_group, cell_size, speed, color_index)
         self.image = pygame.Surface((cell_size * 3, cell_size * 2))
         self.rect = self.image.get_rect()
         self.rect.x = left + cell_size * 4
@@ -15,8 +15,8 @@ class TBlock(Block):
 
 
 class SBlock(Block):
-    def __init__(self, left, top, cell_size, speed, color_index):
-        super().__init__(cell_size, speed, color_index)
+    def __init__(self, all_group, left, top, cell_size, speed, color_index):
+        super().__init__(all_group, cell_size, speed, color_index)
         self.image = pygame.Surface((cell_size * 3, cell_size * 2))
         self.rect = self.image.get_rect()
         self.rect.x = left + cell_size * 4
@@ -27,8 +27,8 @@ class SBlock(Block):
 
 
 class OBlock(Block):
-    def __init__(self, left, top, cell_size, speed, color_index):
-        super().__init__(cell_size, speed, color_index)
+    def __init__(self, all_group, left, top, cell_size, speed, color_index):
+        super().__init__(all_group, cell_size, speed, color_index)
         self.image = pygame.Surface((cell_size * 2, cell_size * 2))
         self.rect = self.image.get_rect()
         self.rect.x = left + cell_size * 4
@@ -39,8 +39,8 @@ class OBlock(Block):
 
 
 class IBlock(Block):
-    def __init__(self, left, top, cell_size, speed, color_index):
-        super().__init__(cell_size, speed, color_index)
+    def __init__(self, all_group, left, top, cell_size, speed, color_index):
+        super().__init__(all_group, cell_size, speed, color_index)
         self.image = pygame.Surface((cell_size * 4, cell_size))
         self.rect = self.image.get_rect()
         self.rect.x = left + cell_size * 3
@@ -53,8 +53,8 @@ class IBlock(Block):
 
 
 class LBlock(Block):
-    def __init__(self, left, top, cell_size, speed, color_index):
-        super().__init__(cell_size, speed, color_index)
+    def __init__(self, all_group, left, top, cell_size, speed, color_index):
+        super().__init__(all_group, cell_size, speed, color_index)
         self.image = pygame.Surface((cell_size * 3, cell_size * 2))
         self.rect = self.image.get_rect()
         self.rect.x = left + cell_size * 4
@@ -65,8 +65,8 @@ class LBlock(Block):
 
 
 class JBlock(Block):
-    def __init__(self, left, top, cell_size, speed, color_index):
-        super().__init__(cell_size, speed, color_index)
+    def __init__(self, all_group, left, top, cell_size, speed, color_index):
+        super().__init__(all_group, cell_size, speed, color_index)
         self.image = pygame.Surface((cell_size * 3, cell_size * 2))
         self.rect = self.image.get_rect()
         self.rect.x = left + cell_size * 4
@@ -77,8 +77,8 @@ class JBlock(Block):
 
 
 class ZBlock(Block):
-    def __init__(self, left, top, cell_size, speed, color_index):
-        super().__init__(cell_size, speed, color_index)
+    def __init__(self, all_group, left, top, cell_size, speed, color_index):
+        super().__init__(all_group, cell_size, speed, color_index)
         self.image = pygame.Surface((cell_size * 3, cell_size * 2))
         self.rect = self.image.get_rect()
         self.rect.x = left + cell_size * 4

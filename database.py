@@ -1,6 +1,5 @@
 import sqlite3
 
-
 database_path = 'data/tetris.db'
 
 
@@ -40,3 +39,30 @@ def save_result_in_db(score, time):  # обновляем и сохраняем 
     con.commit()
     con.close()
     print('данные в бд сохранены', best_score, all_score, all_time)
+
+
+def create_table():
+    con = sqlite3.connect('data/tetris.db')
+    cur = con.cursor()
+    query = """CREATE TABLE players (
+    id            INTEGER     UNIQUE
+                              NOT NULL
+                              PRIMARY KEY AUTOINCREMENT,
+    player        TEXT        NOT NULL,
+    active_player INTEGER (1) );
+    """
+    cur.execute(query)
+    query = """CREATE TABLE stats (
+    player_id  INTEGER REFERENCES tetris (id) 
+                       UNIQUE,
+    best_score INTEGER,
+    all_score  INTEGER,
+    play_time  INTEGER); """
+    cur.execute(query)
+    query = """INSERT INTO players VALUES(1, 'guest', 1);"""
+    cur.execute(query)
+    query = """INSERT INTO stats VALUES(1, 0, 0, 0);"""
+    cur.execute(query)
+    con.commit()
+    con.close()
+

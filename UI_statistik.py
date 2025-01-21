@@ -2,10 +2,9 @@ import pygame
 from variables import HEIGHT, WIDTH
 from database import get_statistic
 
-best_score, all_score, play_time = get_statistic()  # получаем статистику из базы данных
-
 
 def ui_show_statistic(screen):  # рисуем статистику на экране
+    best_score, all_score, play_time = get_statistic()  # получаем статистику из базы данных
     font = pygame.font.SysFont(None, 40)
     img_best_score = font.render('Best score', 1, '#03dac6', (0, 0, 0))
     img_best_score_amount = font.render(str(best_score), 1, '#03dac6')

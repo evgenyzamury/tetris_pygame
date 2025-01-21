@@ -1,12 +1,15 @@
 import random
 import pygame
+import os
 from blocks import *
+from camera import Camera
 from board import Board
 from Button import ColorButton
 from ui_in_game import InGameUI
 from ui_menu import MenuUI
 from settings_ui import SettingsUI
 from UI_statistik import ui_show_statistic
+from database import *
 
 SIZE = WIDTH, HEIGHT = 800, 900
 FPS = 60
@@ -27,7 +30,7 @@ def gameplay():
     in_game_ui.render(screen)
 
     show_next_block()
-    all_group.update(colliders)
+    # all_group.update(colliders)
 
 
 def main_menu():
@@ -55,7 +58,7 @@ def spawn_new_block(block=None, spawn_block_list=None):
             return False, spawn_block_list
     block_index = spawn_block_list[0][0]  # определяем какой блок заспавниться
     color_index = spawn_block_list[0][1]  # определяем цвет блока
-    block = BLOCKS[block_index](left, top, cell_size, speed, color_index)
+    block = BLOCKS[block_index](all_group, left, top, cell_size, speed, color_index)
     return block, spawn_block_list
 
 
@@ -66,8 +69,9 @@ def show_next_block():  # показывает следующий блок ко�
     screen.blit(img_text, (x, y))
     block_index = spawn_block_list[1][0]
     color_index = spawn_block_list[1][1]
-    show_block = BLOCKS[block_index](x - 70, y + 50, 20, 0, color_index)
-    show_block.draw(screen)
+
+    # show_block = BLOCKS[block_index](all_group, x - 70, y + 50, 20, 0, color_index)
+    # show_block.draw(screen)
 
 
 def get_button_action(self, event):
@@ -79,10 +83,19 @@ def get_button_action(self, event):
 
 
 if __name__ == '__main__':
+
+    # проверяем на наличие базы данных, если нету создаём пустую
+    if not os.path.isfile("data/tetris.db"):
+        if not os.path.isfile('data'):
+            os.mkdir('data')
+        create_table()
+
     pygame.init()
     screen = pygame.display.set_mode(SIZE)
     pygame.display.set_caption('tetris')
     settings_ui = SettingsUI(800, 600)
+
+    all_group = pygame.sprite.Group()
 
     clock = pygame.time.Clock()
     running = True
@@ -92,12 +105,13 @@ if __name__ == '__main__':
     start_menu = True
     show_statistic = False
 
-    board = Board(10, 21)
+    camera = Camera()
+
+    board = Board(all_group, 10, 21)
     cell_size = 40
     cell_height = 21
     cell_width = 10
     colliders = []
-    all_group = pygame.sprite.Group()
     left = (WIDTH - (cell_width * cell_size)) // 2
     top = (HEIGHT - (cell_height * cell_size)) // 2 - 30
     board.set_view(left, top, cell_size, colliders)
@@ -234,7 +248,25 @@ if __name__ == '__main__':
                 results_button.draw(screen)
                 quit_button.draw(screen)
             else:
-                pause_button.draw(screen)
+                # print(board.rect.x)
+                # if 100 < board.rect.x < 200:
+                #     dx = random.randint(-1, 1)
+                # elif 100 > board.rect.x:
+                #     dx = 1
+                # else:
+                #     dx = -1
+                #
+                # if 10 < board.rect.y < 40:
+                #     dy = random.randint(-1, 1)
+                # elif 10 > board.rect.y:
+                #     dy = 1
+                # else:
+                #     dy = -1
+                #
+                # camera.update((dx, dy))
+                # for i, sprite in enumerate(all_group):
+                #     camera.apply(sprite)
+                # pause_button.draw(screen)
                 gameplay()
 
         if tetris_game_running and block.is_ground:
