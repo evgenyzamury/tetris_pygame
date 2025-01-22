@@ -12,6 +12,7 @@ class Block(pygame.sprite.Sprite):
         super().__init__(all_group)
         self.speed = speed
         self.tick = 0
+        self.move_tick = 0
         self.is_ground = False
         self.ground_more_time = False  # переменная для увелечения времени на земле
         self.rects = []
@@ -47,19 +48,35 @@ class Block(pygame.sprite.Sprite):
             self.tick = 0
         self.fill_rects(self.rects)
 
-    def move_right(self, colliders):  # движение блока вправо
-        self.rect.x += self.cell_size
-        self.fill_rects(self.rects)
-        if check_collide(self.rects, colliders) or self.is_ground:
-            self.rect.x -= self.cell_size
-            self.fill_rects(self.rects)
-
-    def move_left(self, colliders):  # движение блока влево
-        self.rect.x -= self.cell_size
-        self.fill_rects(self.rects)
-        if check_collide(self.rects, colliders) or self.is_ground:
+    def move_right(self, colliders, vertical_borders):  # движение блока вправо
+        dx = 0
+        self.move_tick += 10 / 60
+        if self.move_tick > 1:
+            self.move_tick = 0
             self.rect.x += self.cell_size
             self.fill_rects(self.rects)
+            if check_collide(self.rects, vertical_borders):
+                dx = 5
+            if check_collide(self.rects, colliders) or self.is_ground:
+                self.rect.x -= self.cell_size
+                self.fill_rects(self.rects)
+        return dx
+
+    def move_left(self, colliders, vertical_borders):  # движение блока влево
+        dx = 0
+        self.move_tick += 10 / 60
+        if self.move_tick > 1:
+            self.move_tick = 0
+            self.rect.x -= self.cell_size
+            self.fill_rects(self.rects)
+            if check_collide(self.rects, vertical_borders):
+                print(vertical_borders)
+                dx = -5
+            if check_collide(self.rects, colliders) or self.is_ground:
+                self.rect.x += self.cell_size
+                self.fill_rects(self.rects)
+
+        return dx
 
     def instant_fall(self, horizontal_colliders):  # мгновенное падение блока
         speed = self.speed

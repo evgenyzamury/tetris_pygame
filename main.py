@@ -22,7 +22,34 @@ level = 1
 is_paused = False
 
 
-def gameplay():
+def gameplay(flag_shake_y):
+    dx = dy = 0
+    # логика тряски экрана при приземлении
+    if flag_shake_y:
+        flag_shake_y -= 1
+        dy = power_shake_y
+    elif board.rect.y != top:
+        dy = -power_shake_y
+
+    key = pygame.key.get_pressed()
+    if key[pygame.K_DOWN]:
+        block.speed = 20
+    if key[pygame.K_RIGHT]:
+        dx = block.move_right(colliders, vertical_borders)
+        if board.rect.x > left:
+            dx = 0
+    elif key[pygame.K_LEFT]:
+        dx = block.move_left(colliders, vertical_borders)
+        if board.rect.x < left:
+            dx = 0
+    else:
+        print(board.rect.x, left)
+        if board.rect.x > left:
+            dx = -5
+        elif board.rect.x < left:
+            dx += 5
+        block.move_tick = 1
+
     board.render(screen)
     block.update(colliders)
     block.shadow(screen, colliders)
@@ -30,7 +57,13 @@ def gameplay():
     in_game_ui.render(screen)
 
     show_next_block()
+
+    camera.update((dx, dy))
+    for i, sprite in enumerate(all_group):
+        camera.apply(sprite)
+    pause_button.draw(screen)
     # all_group.update(colliders)
+    return flag_shake_y
 
 
 def main_menu():
@@ -39,7 +72,7 @@ def main_menu():
     menu_ui.render(screen)
 
 
-def spawn_new_block(block=None, spawn_block_list=None):
+def spawn_new_block(flag_shake_y, block=None, spawn_block_list=None):
     defeat = False
     # если у нас есть блок, то оставим его снизу
     if block:
@@ -48,6 +81,7 @@ def spawn_new_block(block=None, spawn_block_list=None):
         spawn_block_list = spawn_block_list[1::]
         spawn_block_list.append((random.randint(0, 6), random.randint(0, 6)))
         block.kill()  # убираем активный блок из группы
+        flag_shake_y += 3
         for rect in block.rects:
             x, y = rect.center
             cell = board.get_cell((x, y))
@@ -56,11 +90,11 @@ def spawn_new_block(block=None, spawn_block_list=None):
                 defeat = True
                 # если да, мы проиграли
         if defeat:
-            return False, spawn_block_list
+            return False, spawn_block_list, flag_shake_y
     block_index = spawn_block_list[0][0]  # определяем какой блок заспавниться
     color_index = spawn_block_list[0][1]  # определяем цвет блока
     block = BLOCKS[block_index](all_group, board.rect.x, board.rect.y, cell_size, speed, color_index)
-    return block, spawn_block_list
+    return block, spawn_block_list, flag_shake_y
 
 
 def show_next_block():  # показывает следующий блок который заспавнится
@@ -105,6 +139,7 @@ if __name__ == '__main__':
     tetris_game_running = False
     start_menu = True
     show_statistic = False
+    flag_shake_y = 0
 
     camera = Camera()
 
@@ -113,13 +148,15 @@ if __name__ == '__main__':
     cell_height = 21
     cell_width = 10
     colliders = []
+    vertical_borders = []
     left = (WIDTH - (cell_width * cell_size)) // 2
     top = (HEIGHT - (cell_height * cell_size)) // 2 - 30
-    board.set_view(left, top, cell_size, colliders)
+    board.set_view(left, top, cell_size, colliders, vertical_borders)
 
-    speed = 2
+    power_shake_y = 1
+    speed = 1
     spawn_block_list = [(random.randint(0, 6), random.randint(0, 6)), (random.randint(0, 6), random.randint(0, 6))]
-    block, spawn_block_list = spawn_new_block(spawn_block_list=spawn_block_list)
+    block, spawn_block_list, flag_shake_y = spawn_new_block(flag_shake_y, spawn_block_list=spawn_block_list)
 
     width = 260
     height = 80
@@ -144,7 +181,7 @@ if __name__ == '__main__':
                               text_size=30)
 
     while running:
-        board.update(colliders)
+        board.update(colliders, vertical_borders)
         screen.fill((0, 0, 0))
 
         for event in pygame.event.get():
@@ -152,23 +189,16 @@ if __name__ == '__main__':
                 running = False
 
             if tetris_game_running and event.type == pygame.KEYDOWN:
-                key = pygame.key.get_pressed()
-                if key[pygame.K_DOWN]:
-                    block.speed = 20
-                if event.key == pygame.K_RIGHT:
-                    block.move_right(colliders)
-                if event.key == pygame.K_LEFT:
-                    block.move_left(colliders)
                 if event.key == pygame.K_UP:
                     block.rotation(colliders)
                 if event.key == pygame.K_SPACE:
                     block.instant_fall(colliders)
                 if event.key == pygame.K_ESCAPE:
                     is_paused = not is_paused
+
             elif tetris_game_running and event.type == pygame.KEYUP:
                 if event.key == pygame.K_DOWN:
                     block.speed = speed
-
             if event.type == pygame.MOUSEMOTION:
                 pause_button.handle_event(event)
                 continue_button.handle_event(event)
@@ -240,7 +270,12 @@ if __name__ == '__main__':
                     start_menu = False
                     tetris_game_running = True
 
-        if tetris_game_running:
+        # ЛОГИКА ОТОБРАЖЕНИЕ ЭКРАНОВ
+        if start_menu:
+            main_menu()
+            menu_ui.handle_event(event)
+
+        elif tetris_game_running:
             if is_paused:
                 # Меню паузы
                 back_button.draw(screen)
@@ -249,56 +284,45 @@ if __name__ == '__main__':
                 results_button.draw(screen)
                 quit_button.draw(screen)
             else:
+                # ход игры
+                # логика тряски экрана при приземлении
+                flag_shake_y = gameplay(flag_shake_y)
 
-                dx = dy = 1
-                if 100 < board.rect.x < 300:
-                    dx = random.randint(-7, 7)
-                elif 100 > board.rect.x:
-                    dx = 12
-                else:
-                    dx = -3
-
-                if 0 < board.rect.y < 60:
-                    dy = random.randint(-7, 7)
-                elif 10 > board.rect.y:
-                    dy = 3
-                else:
-                    dy = -12
-                gameplay()
-                camera.update((dx, dy))
+                # изменение позиции камеры
                 for i, sprite in enumerate(all_group):
                     camera.apply(sprite)
                 pause_button.draw(screen)
 
+                font = pygame.font.SysFont(None, 30)
+                score_text = font.render(f"Score: {score}", True, (255, 255, 255))
+                level_text = font.render(f"Level: {level}", True, (255, 255, 255))
+                screen.blit(level_text, (620, 20))
+                screen.blit(score_text, (620, 70))
+
+        elif defeat:
+            board.render(screen)
+            font = pygame.font.SysFont(None, 100)
+            img = font.render("YOU LOSE!", 1, (255, 255, 255), (0, 0, 0))
+            screen.blit(img, (WIDTH // 2 - img.get_width() // 2, HEIGHT // 2 - img.get_height()))
+
+        # Проверка игры и логика спавна нового блока
         if tetris_game_running and block.is_ground:
-            block, spawn_block_list = spawn_new_block(block, spawn_block_list=spawn_block_list)
+            block, spawn_block_list, flag_shake_y = spawn_new_block(flag_shake_y, block,
+                                                                    spawn_block_list=spawn_block_list)
             if block:
                 lines_filled = board.check_fill_line()
                 if lines_filled > 0:
                     score += lines_filled * 100
+                    power_shake_y = 4
+                else:
+                    power_shake_y = 1
                 if score >= level * 1000:
                     level += 1
             else:
                 defeat = True
                 tetris_game_running = False
 
-        if start_menu:
-            main_menu()
-            menu_ui.handle_event(event)
-
-        if tetris_game_running:
-            font = pygame.font.SysFont(None, 30)
-            score_text = font.render(f"Score: {score}", True, (255, 255, 255))
-            level_text = font.render(f"Level: {level}", True, (255, 255, 255))
-            screen.blit(level_text, (620, 20))
-            screen.blit(score_text, (620, 70))
-
-        if defeat:
-            board.render(screen)
-            font = pygame.font.SysFont(None, 100)
-            img = font.render("YOU LOSE!", 1, (255, 255, 255), (0, 0, 0))
-            screen.blit(img, (WIDTH // 2 - img.get_width() // 2, HEIGHT // 2 - img.get_height()))
-
+        vertical_borders.clear()
         colliders.clear()
         clock.tick(FPS)
         pygame.display.flip()

@@ -14,6 +14,5 @@ class Camera:
 
     # сдвинуть камеру на координаты:
     def update(self, target):
-        print(target)
         self.dx = target[0]
         self.dy = target[1]

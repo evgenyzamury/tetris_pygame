@@ -17,19 +17,18 @@ class Board(pygame.sprite.Sprite):
         self.step = 0
         self.first_step = True
         self.color_step = None
-        print(width * self.cell_size, height * self.cell_size)
         self.surface = pygame.Surface((width * self.cell_size, height * self.cell_size))
         self.rect = self.surface.get_rect(topleft=(self.left, self.top))
 
-    def set_view(self, left, top, cell_size, colliders):  # настройка внешнего вида
+    def set_view(self, left, top, cell_size, colliders, vertical_borders):  # настройка внешнего вида
         self.left = left
         self.top = top
         self.cell_size = cell_size
-        self.create_borders(colliders)
+        self.create_borders(colliders, vertical_borders)
         self.surface = pygame.Surface((self.width * self.cell_size, self.height * self.cell_size))
         self.rect = self.surface.get_rect(topleft=(self.left, self.top))
 
-    def create_borders(self, colliders):
+    def create_borders(self, colliders, vertical_borders):
         # делаем стенки нашего поля, левое - правое - нижнее
         x1, y1 = self.rect.x, self.rect.y
         x2, y2 = x1 + (self.width * self.cell_size), y1 + (self.height * self.cell_size)
@@ -41,6 +40,8 @@ class Board(pygame.sprite.Sprite):
         colliders.append(left_rect)
         colliders.append(right_rect)
         colliders.append(horizontal_rect)
+        vertical_borders.append(left_rect)
+        vertical_borders.append(right_rect)
 
     def render(self, screen):
         # отрисовка нашего игрового поля
@@ -63,9 +64,9 @@ class Board(pygame.sprite.Sprite):
                     pygame.draw.line(screen, COLOR[color_index][3], (x, y + 1), (x + w, y + 1), 2)
                     pygame.draw.line(screen, COLOR[color_index][3], (x + 1, y), (x + 1, y + h), 2)
 
-    def update(self, colliders):
+    def update(self, colliders, vertical_borders):
         # функция для обновления списка коллайдеров
-        self.create_borders(colliders)
+        self.create_borders(colliders, vertical_borders)
         for i, line in enumerate(self.board):
             for j, elem in enumerate(line):
                 # если элемент не пустой создаём коллайдер
