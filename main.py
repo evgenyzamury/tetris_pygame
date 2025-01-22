@@ -43,7 +43,6 @@ def gameplay(flag_shake_y):
         if board.rect.x < left:
             dx = 0
     else:
-        print(board.rect.x, left)
         if board.rect.x > left:
             dx = -5
         elif board.rect.x < left:
@@ -58,6 +57,7 @@ def gameplay(flag_shake_y):
 
     show_next_block()
 
+    # изменение позиции камеры
     camera.update((dx, dy))
     for i, sprite in enumerate(all_group):
         camera.apply(sprite)
@@ -288,10 +288,6 @@ if __name__ == '__main__':
                 # логика тряски экрана при приземлении
                 flag_shake_y = gameplay(flag_shake_y)
 
-                # изменение позиции камеры
-                for i, sprite in enumerate(all_group):
-                    camera.apply(sprite)
-                pause_button.draw(screen)
 
                 font = pygame.font.SysFont(None, 30)
                 score_text = font.render(f"Score: {score}", True, (255, 255, 255))
