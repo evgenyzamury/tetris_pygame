@@ -7,8 +7,11 @@ class SettingsUI:
         self.height = height
         self.font = pygame.font.SysFont(None, 30)
 
-        self.bg_color = pygame.Color("white")
-        self.text_color = pygame.Color("black")
+        self.theme_colors = {
+            "Light": {"bg": pygame.Color("white"), "text": pygame.Color("black")},
+            "Dark": {"bg": pygame.Color("black"), "text": pygame.Color("white")},
+        }
+
         self.options = {
             "music_volume": 50,
             "block_volume": 50,
@@ -16,6 +19,8 @@ class SettingsUI:
             "language": "English",
             "theme": "Light",
         }
+
+        self.update_theme_colors()
 
         self.music_slider_rect = pygame.Rect(200, 100, 300, 10)
         self.block_slider_rect = pygame.Rect(200, 200, 300, 10)
@@ -33,6 +38,11 @@ class SettingsUI:
             {"text": "Dark", "rect": pygame.Rect(310, 500, 100, 40)},
         ]
         self.back_button_rect = pygame.Rect(50, 600, 120, 50)
+
+    def update_theme_colors(self):
+        theme = self.options["theme"]
+        self.bg_color = self.theme_colors[theme]["bg"]
+        self.text_color = self.theme_colors[theme]["text"]
 
     def render(self, screen):
         screen.fill(self.bg_color)
@@ -104,4 +114,5 @@ class SettingsUI:
             for button in self.theme_buttons:
                 if button["rect"].collidepoint(event.pos):
                     self.options["theme"] = button["text"]
+                    self.update_theme_colors()
         return None
