@@ -16,6 +16,9 @@ FPS = 60
 
 BLOCKS = [ZBlock, SBlock, IBlock, LBlock, TBlock, JBlock, OBlock]
 
+story_line = []
+index_story = -1
+
 score = 0
 level = 1
 
@@ -177,13 +180,16 @@ if __name__ == '__main__':
 
         pause_button = ColorButton(WIDTH - 770, 20, 80, 40, 'Pause', 'black', hover_color='gray', text_size=30)
 
-        back_button = ColorButton(WIDTH // 2 - 100, HEIGHT // 2 - 95, 200, 50, 'Back to Menu', 'black', hover_color='gray',
+        back_button = ColorButton(WIDTH // 2 - 100, HEIGHT // 2 - 95, 200, 50, 'Back to Menu', 'black',
+                                  hover_color='gray',
                                   text_size=30)
-        continue_button = ColorButton(WIDTH // 2 - 100, HEIGHT // 2 - 50, 200, 50, 'Continue', 'black', hover_color='gray',
+        continue_button = ColorButton(WIDTH // 2 - 100, HEIGHT // 2 - 50, 200, 50, 'Continue', 'black',
+                                      hover_color='gray',
                                       text_size=30)
         settings_button = ColorButton(WIDTH // 2 - 100, HEIGHT // 2, 200, 50, 'Settings', 'black', hover_color='gray',
                                       text_size=30)
-        results_button = ColorButton(WIDTH // 2 - 100, HEIGHT // 2 + 45, 200, 50, 'Results', 'black', hover_color='gray',
+        results_button = ColorButton(WIDTH // 2 - 100, HEIGHT // 2 + 45, 200, 50, 'Results', 'black',
+                                     hover_color='gray',
                                      text_size=30)
         quit_button = ColorButton(WIDTH // 2 - 100, HEIGHT // 2 + 90, 200, 50, 'Quit', 'black', hover_color='gray',
                                   text_size=30)

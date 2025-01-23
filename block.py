@@ -39,16 +39,15 @@ class Block(pygame.sprite.Sprite):
             if not self.is_ground:
                 self.rect.y += 40
                 self.fill_rects(self.rects)
+                if not insta_fall:  # проверка что это не мгновенное падание звука (иначе звук накладывается)
+                    self.sound_fall.set_volume(0.3)
+                    self.sound_fall.play()
                 if check_collide(self.rects, colliders):
                     self.rect.y -= 40
                     if self.ground_more_time:
                         self.is_ground = True
                     else:
                         self.ground_more_time = True
-                else:
-                    if not insta_fall:  # проверка что это не мгновенное падание звука (иначе звук накладывается)
-                        self.sound_fall.set_volume(0.3)
-                        self.sound_fall.play()
             self.tick = 0
         self.fill_rects(self.rects)
 
