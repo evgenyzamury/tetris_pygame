@@ -2,14 +2,17 @@ import pygame
 
 
 class ColorButton:
-    def __init__(self, x, y, width, height, text, color, hover_color=None, text_size=20):
-        self.rect = pygame.Rect(x, y, width, height)  # Создание rect
+    def __init__(self, x, y, width, height, text, color, hover_color=None, text_color=(255, 255, 255),
+                 bg_color=(0, 0, 0), text_size=20):
+        self.rect = pygame.Rect(x, y, width, height)
         self.x, self.y = x, y
         self.width = width
         self.height = height
         self.text = text
         self.text_size = text_size
         self.color = pygame.Color(color)
+        self.text_color = text_color
+        self.bg_color = bg_color
         self.font = pygame.font.SysFont(None, self.text_size)
         self.sound = pygame.mixer.Sound('data/sounds/button.mp3')
         self.hover_color = pygame.Color(hover_color if hover_color else color)
@@ -20,7 +23,7 @@ class ColorButton:
         # Если курсор на кнопке, рисуем её другим цветом
         color_to_draw = self.hover_color if self.is_hovered else self.color
         pygame.draw.rect(screen, color_to_draw, self.rect)
-        text_surface = self.font.render(self.text, True, (255, 255, 255))
+        text_surface = self.font.render(self.text, True, self.text_color)
         screen.blit(text_surface, (self.rect.x + (self.rect.width - text_surface.get_width()) // 2,
                                    self.rect.y + (self.rect.height - text_surface.get_height()) // 2))
 

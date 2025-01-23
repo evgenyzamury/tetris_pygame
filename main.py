@@ -102,8 +102,12 @@ def spawn_new_block(flag_shake_y, block=None, spawn_block_list=None):
 def show_next_block():  # показывает следующий блок который заспавнится
     x, y = 670, 250
     font = pygame.font.SysFont(None, 30)
-    img_text = font.render('Next: ', 1, (255, 255, 255))
-    screen.blit(img_text, (x, y))
+    if settings_ui.bg_color == (255, 255, 255):
+        img_text = font.render('Next: ', 1, (0, 0, 0))
+        screen.blit(img_text, (x, y))
+    else:
+        img_text = font.render('Next: ', 1, (255, 255, 255))
+        screen.blit(img_text, (x, y))
     block_index = spawn_block_list[1][0]
     color_index = spawn_block_list[1][1]
 
@@ -189,7 +193,7 @@ if __name__ == '__main__':
 
     while running:
         board.update(colliders, vertical_borders)
-        screen.fill((0, 0, 0))
+        screen.fill(settings_ui.bg_color)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -227,7 +231,6 @@ if __name__ == '__main__':
                     elif action == 'Settings':
                         settings_open = True
                         while settings_open:
-                            screen.fill((0, 0, 0))
                             settings_ui.render(screen)
                             pygame.display.flip()
                             for settings_event in pygame.event.get():
@@ -248,7 +251,7 @@ if __name__ == '__main__':
 
                 # Логика паузы
                 if is_paused:
-                    print('ok')
+
                     if continue_button.rect.collidepoint(event.pos):
                         is_paused = False
                     elif back_button.rect.collidepoint(event.pos):
@@ -259,7 +262,7 @@ if __name__ == '__main__':
                         settings_open = True
                         while settings_open:
                             print('123')
-                            screen.fill((0, 0, 0))
+                            screen.fill(settings_ui.bg_color)
                             settings_ui.render(screen)
                             pygame.display.flip()
                             for settings_event in pygame.event.get():
@@ -282,12 +285,13 @@ if __name__ == '__main__':
 
         # ЛОГИКА ОТОБРАЖЕНИЕ ЭКРАНОВ
         if start_menu:
+            screen.fill(settings_ui.bg_color)
             main_menu()
             menu_ui.handle_event(event)
 
         elif tetris_game_running:
             if is_paused:
-                # Меню паузы
+                screen.fill(settings_ui.bg_color)
                 back_button.draw(screen)
                 continue_button.draw(screen)
                 settings_button.draw(screen)
@@ -299,10 +303,16 @@ if __name__ == '__main__':
                 flag_shake_y = gameplay(flag_shake_y)
 
                 font = pygame.font.SysFont(None, 30)
-                score_text = font.render(f"Score: {score}", True, (255, 255, 255))
-                level_text = font.render(f"Level: {level}", True, (255, 255, 255))
-                screen.blit(level_text, (620, 20))
-                screen.blit(score_text, (620, 70))
+                if settings_ui.bg_color == (255, 255, 255):
+                    score_text = font.render(f"Score: {score}", True, (0, 0, 0))
+                    level_text = font.render(f"Level: {level}", True, (0, 0, 0))
+                    screen.blit(level_text, (620, 20))
+                    screen.blit(score_text, (620, 70))
+                else:
+                    score_text = font.render(f"Score: {score}", True, (255, 255, 255))
+                    level_text = font.render(f"Level: {level}", True, (255, 255, 255))
+                    screen.blit(level_text, (620, 20))
+                    screen.blit(score_text, (620, 70))
 
         elif defeat:
             board.render(screen)

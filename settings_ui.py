@@ -45,6 +45,7 @@ class SettingsUI:
         self.text_color = self.theme_colors[theme]["text"]
 
     def render(self, screen):
+        screen.fill((0, 0, 0))
         screen.fill(self.bg_color)
 
         title = self.font.render("Settings", True, self.text_color)
