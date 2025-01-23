@@ -1,5 +1,7 @@
 import pygame
 from Button import ColorButton
+from settings_ui import SettingsUI
+
 
 
 class MenuUI:
@@ -12,19 +14,30 @@ class MenuUI:
         button_width = 200
         button_height = 60
         spacing = 20
+        settings_ui = SettingsUI(800, 600)
 
         center_x = self.width // 2 - button_width // 2
         start_y = self.height // 2 - (2 * button_height + 1.5 * spacing)
 
-        self.continue_button = ColorButton(center_x, start_y, button_width, button_height, 'Continue', 'black',
-                                           hover_color='gray', text_size=30)
-        self.settings_button = ColorButton(center_x, start_y + button_height + spacing, button_width, button_height,
-                                           'Settings', 'black', hover_color='gray', text_size=30)
-        self.results_button = ColorButton(center_x, start_y + 2 * (button_height + spacing), button_width,
-                                          button_height, 'Results', 'black', hover_color='gray', text_size=30)
-        self.save_exit_button = ColorButton(center_x, start_y + 3 * (button_height + spacing), button_width,
-                                            button_height, 'Save and Exit', 'black', hover_color='gray', text_size=30)
-
+        if settings_ui.bg_color == (0, 0, 0):
+            self.continue_button = ColorButton(center_x, start_y, button_width, button_height, 'Continue', 'black',
+                                               hover_color='gray', text_size=30)
+            self.settings_button = ColorButton(center_x, start_y + button_height + spacing, button_width, button_height,
+                                               'Settings', 'black', hover_color='gray', text_size=30)
+            self.results_button = ColorButton(center_x, start_y + 2 * (button_height + spacing), button_width,
+                                              button_height, 'Results', 'black', hover_color='gray', text_size=30)
+            self.save_exit_button = ColorButton(center_x, start_y + 3 * (button_height + spacing), button_width,
+                                                button_height, 'Save and Exit', 'black', hover_color='gray', text_size=30)
+        else:
+            self.continue_button = ColorButton(center_x, start_y, button_width, button_height, 'Continue', 'white',
+                                               hover_color='gray', text_size=30)
+            self.settings_button = ColorButton(center_x, start_y + button_height + spacing, button_width, button_height,
+                                               'Settings', 'white', hover_color='gray', text_size=30)
+            self.results_button = ColorButton(center_x, start_y + 2 * (button_height + spacing), button_width,
+                                              button_height, 'Results', 'white', hover_color='gray', text_size=30)
+            self.save_exit_button = ColorButton(center_x, start_y + 3 * (button_height + spacing), button_width,
+                                                button_height, 'Save and Exit', 'white', hover_color='gray',
+                                                text_size=30)
         self.buttons = [
             self.continue_button,
             self.settings_button,

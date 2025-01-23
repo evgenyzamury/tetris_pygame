@@ -2,7 +2,7 @@ import pygame
 
 
 class ColorButton:
-    def __init__(self, x, y, width, height, text, color, hover_color=None, text_color=(255, 255, 255),
+    def __init__(self, x, y, width, height, text, color, hover_color=None, text_color=(0, 0, 0),
                  bg_color=(0, 0, 0), text_size=20):
         self.rect = pygame.Rect(x, y, width, height)
         self.x, self.y = x, y

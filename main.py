@@ -166,25 +166,47 @@ if __name__ == '__main__':
 
     width = 260
     height = 80
-    start_button = ColorButton(WIDTH // 2 - width // 2, (HEIGHT // 2 - height // 2) - 200, width, height,
-                               'TETRIS GAME', 'black', hover_color='gray', text_size=40)
-    pause_button = ColorButton(WIDTH - 770, 20, 80, 40, 'Pause', 'black', hover_color='gray', text_size=30)
 
     pos = 0, 0
 
+    if settings_ui.bg_color == (0, 0, 0):
+        start_button = ColorButton(WIDTH // 2 - width // 2, (HEIGHT // 2 - height // 2) - 200, width, height,
+                                   'TETRIS GAME', 'black', hover_color='gray', text_size=40)
+
+        pause_button = ColorButton(WIDTH - 770, 20, 80, 40, 'Pause', 'black', hover_color='gray', text_size=30)
+
+        back_button = ColorButton(WIDTH // 2 - 100, HEIGHT // 2 - 95, 200, 50, 'Back to Menu', 'black', hover_color='gray',
+                                  text_size=30)
+        continue_button = ColorButton(WIDTH // 2 - 100, HEIGHT // 2 - 50, 200, 50, 'Continue', 'black', hover_color='gray',
+                                      text_size=30)
+        settings_button = ColorButton(WIDTH // 2 - 100, HEIGHT // 2, 200, 50, 'Settings', 'black', hover_color='gray',
+                                      text_size=30)
+        results_button = ColorButton(WIDTH // 2 - 100, HEIGHT // 2 + 45, 200, 50, 'Results', 'black', hover_color='gray',
+                                     text_size=30)
+        quit_button = ColorButton(WIDTH // 2 - 100, HEIGHT // 2 + 90, 200, 50, 'Quit', 'black', hover_color='gray',
+                                  text_size=30)
+    else:
+        start_button = ColorButton(WIDTH // 2 - width // 2, (HEIGHT // 2 - height // 2) - 200, width, height,
+                                   'TETRIS GAME', 'white', hover_color='gray', text_size=40)
+
+        pause_button = ColorButton(WIDTH - 770, 20, 80, 40, 'Pause', 'white', hover_color='gray', text_size=30)
+
+        back_button = ColorButton(WIDTH // 2 - 100, HEIGHT // 2 - 95, 200, 50, 'Back to Menu', 'white',
+                                  hover_color='gray',
+                                  text_size=30)
+        continue_button = ColorButton(WIDTH // 2 - 100, HEIGHT // 2 - 50, 200, 50, 'Continue', 'white',
+                                      hover_color='gray',
+                                      text_size=30)
+        settings_button = ColorButton(WIDTH // 2 - 100, HEIGHT // 2, 200, 50, 'Setting', 'white', hover_color='gray',
+                                      text_size=30)
+        results_button = ColorButton(WIDTH // 2 - 100, HEIGHT // 2 + 45, 200, 50, 'Results', 'white',
+                                     hover_color='gray',
+                                     text_size=30)
+        quit_button = ColorButton(WIDTH // 2 - 100, HEIGHT // 2 + 90, 200, 50, 'Quit', 'white', hover_color='gray',
+                                  text_size=30)
+
     menu_ui = MenuUI(WIDTH, HEIGHT)
     in_game_ui = InGameUI(WIDTH, HEIGHT)
-
-    back_button = ColorButton(WIDTH // 2 - 100, HEIGHT // 2 - 95, 200, 50, 'Back to Menu', 'black', hover_color='gray',
-                              text_size=30)
-    continue_button = ColorButton(WIDTH // 2 - 100, HEIGHT // 2 - 50, 200, 50, 'Continue', 'black', hover_color='gray',
-                                  text_size=30)
-    settings_button = ColorButton(WIDTH // 2 - 100, HEIGHT // 2, 200, 50, 'Settings', 'black', hover_color='gray',
-                                  text_size=30)
-    results_button = ColorButton(WIDTH // 2 - 100, HEIGHT // 2 + 45, 200, 50, 'Results', 'black', hover_color='gray',
-                                 text_size=30)
-    quit_button = ColorButton(WIDTH // 2 - 100, HEIGHT // 2 + 90, 200, 50, 'Quit', 'black', hover_color='gray',
-                              text_size=30)
 
     play_music = pygame.mixer.Sound('data/sounds/base_music_fon.mp3')
     play_music.set_volume(volume_music)
@@ -251,7 +273,6 @@ if __name__ == '__main__':
 
                 # Логика паузы
                 if is_paused:
-
                     if continue_button.rect.collidepoint(event.pos):
                         is_paused = False
                     elif back_button.rect.collidepoint(event.pos):
@@ -261,8 +282,6 @@ if __name__ == '__main__':
                     elif settings_button.rect.collidepoint(event.pos):
                         settings_open = True
                         while settings_open:
-                            print('123')
-                            screen.fill(settings_ui.bg_color)
                             settings_ui.render(screen)
                             pygame.display.flip()
                             for settings_event in pygame.event.get():
