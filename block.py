@@ -27,24 +27,28 @@ class Block(pygame.sprite.Sprite):
 
         self.rect = pygame.Rect((100, 100, 100, 100))
         self.cell_size = cell_size
+        self.sound_fall = pygame.mixer.Sound('data/sounds/fall_sound.mp3')
+        self.sound_rotate = pygame.mixer.Sound('data/sounds/block_rotate.mp3')
 
     def __repr__(self):
         return f'Block({self.cell_size} {self.speed} {self.color_index})'
 
-    def update(self, colliders):  # функция падения блока
+    def update(self, colliders, insta_fall=False):  # функция падения блока
         self.tick += self.speed / 60
         if self.tick >= 1:
             if not self.is_ground:
                 self.rect.y += 40
                 self.fill_rects(self.rects)
                 if check_collide(self.rects, colliders):
+                    self.rect.y -= 40
                     if self.ground_more_time:
                         self.is_ground = True
                     else:
                         self.ground_more_time = True
                 else:
-                    self.rect.y += self.cell_size
-                self.rect.y -= 40
+                    if not insta_fall:  # проверка что это не мгновенное падание звука (иначе звук накладывается)
+                        self.sound_fall.set_volume(0.3)
+                        self.sound_fall.play()
             self.tick = 0
         self.fill_rects(self.rects)
 
@@ -79,10 +83,12 @@ class Block(pygame.sprite.Sprite):
         return dx
 
     def instant_fall(self, horizontal_colliders):  # мгновенное падение блока
+        self.sound_fall.set_volume(0.3)
+        self.sound_fall.play()
         speed = self.speed
         self.speed = 100
         while not self.is_ground:
-            self.update(horizontal_colliders)
+            self.update(horizontal_colliders, insta_fall=True)
         self.speed = speed
 
     def rotation(self, colliders):  # поворачивает блок на 90 градусов
@@ -93,6 +99,9 @@ class Block(pygame.sprite.Sprite):
         if check_collide(self.rects, colliders):
             self.cords = cords
             self.fill_rects(self.rects)
+        else:
+            self.sound_fall.set_volume(0.3)
+            self.sound_fall.play()
 
     def draw(self, screen):  # рисует блок
         for rect in self.rects:

@@ -21,6 +21,8 @@ level = 1
 
 is_paused = False
 
+volume_music = 0.3
+
 
 def gameplay(flag_shake_y):
     dx = dy = 0
@@ -180,6 +182,11 @@ if __name__ == '__main__':
     quit_button = ColorButton(WIDTH // 2 - 100, HEIGHT // 2 + 90, 200, 50, 'Quit', 'black', hover_color='gray',
                               text_size=30)
 
+    play_music = pygame.mixer.Sound('data/sounds/base_music_fon.mp3')
+    play_music.set_volume(volume_music)
+
+    play_music.play()
+
     while running:
         board.update(colliders, vertical_borders)
         screen.fill((0, 0, 0))
@@ -199,6 +206,7 @@ if __name__ == '__main__':
             elif tetris_game_running and event.type == pygame.KEYUP:
                 if event.key == pygame.K_DOWN:
                     block.speed = speed
+
             if event.type == pygame.MOUSEMOTION:
                 pause_button.handle_event(event)
                 continue_button.handle_event(event)
@@ -240,6 +248,7 @@ if __name__ == '__main__':
 
                 # Логика паузы
                 if is_paused:
+                    print('ok')
                     if continue_button.rect.collidepoint(event.pos):
                         is_paused = False
                     elif back_button.rect.collidepoint(event.pos):
@@ -249,6 +258,7 @@ if __name__ == '__main__':
                     elif settings_button.rect.collidepoint(event.pos):
                         settings_open = True
                         while settings_open:
+                            print('123')
                             screen.fill((0, 0, 0))
                             settings_ui.render(screen)
                             pygame.display.flip()
@@ -287,7 +297,6 @@ if __name__ == '__main__':
                 # ход игры
                 # логика тряски экрана при приземлении
                 flag_shake_y = gameplay(flag_shake_y)
-
 
                 font = pygame.font.SysFont(None, 30)
                 score_text = font.render(f"Score: {score}", True, (255, 255, 255))

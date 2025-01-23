@@ -11,6 +11,7 @@ class ColorButton:
         self.text_size = text_size
         self.color = pygame.Color(color)
         self.font = pygame.font.SysFont(None, self.text_size)
+        self.sound = pygame.mixer.Sound('data/sounds/button.mp3')
         self.hover_color = pygame.Color(hover_color if hover_color else color)
         self.hover = False
         self.is_hovered = False
@@ -33,6 +34,7 @@ class ColorButton:
         # проверяем произошло ли нажатие на кнопку мыши, нажата именно ЛКМ и наведён ли курсор на мышку
         if self.hover and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             pygame.event.post(pygame.event.Event(pygame.USEREVENT, button=self))
+            self.sound.play()
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if self.rect.collidepoint(event.pos):
                 return self.text
