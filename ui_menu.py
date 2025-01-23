@@ -46,7 +46,6 @@ class MenuUI:
                 else:
                     button.is_hovered = False
 
-
     def get_button_action(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             for button in self.buttons:
