@@ -55,6 +55,8 @@ def gameplay(flag_shake_y):
     block.update(colliders)
     block.shadow(screen, colliders)
     block.draw(screen)
+    particles_group.update()
+    particles_group.draw(screen)
     in_game_ui.render(screen)
 
     show_next_block()
@@ -64,7 +66,6 @@ def gameplay(flag_shake_y):
     for i, sprite in enumerate(all_group):
         camera.apply(sprite)
     pause_button.draw(screen)
-    # all_group.update(colliders)
     return flag_shake_y
 
 
@@ -137,6 +138,7 @@ if __name__ == '__main__':
     settings_ui = SettingsUI(800, 600)
 
     all_group = pygame.sprite.Group()
+    particles_group = pygame.sprite.Group()
 
     clock = pygame.time.Clock()
     running = True
@@ -214,6 +216,7 @@ if __name__ == '__main__':
     play_music.play()
 
     while running:
+        pygame.display.set_caption(f'fps - {int(clock.get_fps())}')
         board.update(colliders, vertical_borders)
         screen.fill(settings_ui.bg_color)
 
@@ -344,7 +347,7 @@ if __name__ == '__main__':
             block, spawn_block_list, flag_shake_y = spawn_new_block(flag_shake_y, block,
                                                                     spawn_block_list=spawn_block_list)
             if block:
-                lines_filled = board.check_fill_line()
+                lines_filled = board.check_fill_line(particles_group)
                 if lines_filled > 0:
                     score += lines_filled * 100
                     power_shake_y = 4

@@ -1,7 +1,11 @@
 import copy
+import random
+
 import pygame
 from pprint import pprint
-from variables import COLOR
+from variables import COLOR, WIDTH, HEIGHT
+
+screen_rect = (0, 0, WIDTH, HEIGHT)
 
 
 class Board(pygame.sprite.Sprite):
@@ -94,13 +98,14 @@ class Board(pygame.sprite.Sprite):
         y = cell[1]
         self.board[y][x] = color_index
 
-    def check_fill_line(self):
+    def check_fill_line(self, particles_group):
         count_lines = 0
         # создаём список координат оси y, чтобы отследить где заполнились линии
         need_y = []
         for y, line in enumerate(self.board):
             if all(line):
                 count_lines += 1
+                self.effect_fill_line(y, particles_group)
                 self.board[y] = [0 for _ in range(self.width)]  # убираем блоки с заполненной линии
                 need_y.append(y)
         else:
@@ -109,9 +114,44 @@ class Board(pygame.sprite.Sprite):
                 self.fall_block_after_fill_lines(need_y, count_lines)
             return count_lines
 
+    def effect_fill_line(self, y, particles_group):
+        for x in range(len(self.board[y])):
+            self.broken_block(x, y, particles_group)
+
+    def broken_block(self, x, y, particles_group):
+        n = 7
+        left, top = self.rect.x, self.rect.y
+        xx = left + self.cell_size * x
+        yy = top + self.cell_size * y
+        for i in range(n):
+            for j in range(n):
+                Particle(particles_group, xx + self.cell_size // n * i, yy + self.cell_size // n * j, 5,
+                         COLOR[self.board[y][x] - 1][0])
+
     def fall_block_after_fill_lines(self, y, count):
         # роняем блоки при заполнении линий
         for index in range(count):
             board = copy.deepcopy(self.board)
             for i in range(y[index], 0, -1):
                 self.board[i] = board[i - 1]
+
+
+class Particle(pygame.sprite.Sprite):
+    def __init__(self, particles_group, x, y, size, color):
+        super().__init__(particles_group)
+        self.image = pygame.Surface((size, size))
+        self.image.fill(color)
+        self.rect = self.image.get_rect(topleft=(x, y))
+        self.velocity = [random.randint(-3, 3), random.randint(-3, 4)]
+        self.gravity = 0.15
+
+    def update(self):
+        # применяем гравитационный эффект:
+        # движение с ускорением под действием гравитации
+        self.velocity[1] += self.gravity
+        # перемещаем частицу
+        self.rect.x += self.velocity[0]
+        self.rect.y += self.velocity[1]
+        # убиваем, если частица ушла за экран
+        if not self.rect.colliderect(screen_rect):
+            self.kill()
