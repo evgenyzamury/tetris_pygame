@@ -21,7 +21,7 @@ level = 1
 
 is_paused = False
 
-volume_music = 0.3
+volume_music = 0.1
 
 
 def gameplay(flag_shake_y):

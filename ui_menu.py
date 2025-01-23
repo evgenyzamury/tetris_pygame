@@ -41,6 +41,7 @@ class MenuUI:
             for button in self.buttons:
                 if button.rect.collidepoint(event.pos):
                     if not button.is_hovered:
+                        self.sound.set_volume(0.8)
                         self.sound.play()
                         button.is_hovered = True
                 else:
