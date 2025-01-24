@@ -1,6 +1,8 @@
 import random
-import pygame
 import os
+
+import pygame
+
 from blocks import *
 from camera import Camera
 from board import Board
@@ -23,8 +25,10 @@ score = 0
 level = 1
 
 is_paused = False
+result_show = False
 
-volume_music = 0.1
+music_volume, block_volume, difficulty, language, theme = get_player_settings()
+music_volume = music_volume / 100
 
 
 def gameplay(flag_shake_y):
@@ -128,17 +132,17 @@ def get_button_action(self, event):
 
 
 if __name__ == '__main__':
+    pygame.init()
 
     # проверяем на наличие базы данных, если нету создаём пустую
     if not os.path.isfile("data/tetris.db"):
-        if not os.path.isfile('data'):
+        if not os.path.isdir('data'):
             os.mkdir('data')
         create_table()
 
-    pygame.init()
     screen = pygame.display.set_mode(SIZE)
     pygame.display.set_caption('tetris')
-    settings_ui = SettingsUI(800, 600)
+    settings_ui = SettingsUI()
 
     all_group = pygame.sprite.Group()
     particles_group = pygame.sprite.Group()
@@ -217,9 +221,9 @@ if __name__ == '__main__':
     in_game_ui = InGameUI(WIDTH, HEIGHT)
 
     play_music = pygame.mixer.Sound('data/sounds/base_music_fon.mp3')
-    play_music.set_volume(volume_music)
+    play_music.set_volume(music_volume)
 
-    play_music.play()
+    play_music.play(-1)
 
     while running:
         pygame.display.set_caption(f'fps - {int(clock.get_fps())}')
@@ -230,13 +234,16 @@ if __name__ == '__main__':
             if event.type == pygame.QUIT:
                 running = False
 
-            if tetris_game_running and event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP:
-                    block.rotation(colliders)
-                if event.key == pygame.K_SPACE:
-                    block.instant_fall(colliders)
-                if event.key == pygame.K_ESCAPE:
+            if event.type == pygame.KEYDOWN:
+                if tetris_game_running:
+                    if event.key == pygame.K_UP:
+                        block.rotation(colliders)
+                    if event.key == pygame.K_SPACE:
+                        block.instant_fall(colliders)
+
+                if not start_menu and event.key == pygame.K_ESCAPE:
                     is_paused = not is_paused
+                    tetris_game_running = not tetris_game_running
 
             elif tetris_game_running and event.type == pygame.KEYUP:
                 if event.key == pygame.K_DOWN:
@@ -248,10 +255,12 @@ if __name__ == '__main__':
                 settings_button.handle_event(event)
                 quit_button.handle_event(event)
                 pos = event.pos
+                results_button.check_hover(pos)
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if pause_button.rect.collidepoint(event.pos):
                     is_paused = not is_paused
+                    tetris_game_running = False
 
                 # Логика для главного меню
                 if start_menu:
@@ -263,6 +272,7 @@ if __name__ == '__main__':
                         settings_open = True
                         while settings_open:
                             settings_ui.render(screen)
+                            play_music.set_volume(music_volume)
                             pygame.display.flip()
                             for settings_event in pygame.event.get():
                                 if settings_event.type == pygame.QUIT:
@@ -270,10 +280,12 @@ if __name__ == '__main__':
                                     exit()
                                 if settings_event.type == pygame.KEYDOWN and settings_event.key == pygame.K_ESCAPE:
                                     settings_open = False
-                                settings_action = settings_ui.handle_event(settings_event)
+                                settings_action, music_volume = settings_ui.handle_event(settings_event)
                                 if settings_action == "back":
                                     settings_open = False
-
+                    elif action == 'Results':
+                        print('ok')
+                        show_statistic = True
                     elif action == 'Quit' and start_menu:
                         running = False
 
@@ -284,6 +296,7 @@ if __name__ == '__main__':
                 if is_paused:
                     if continue_button.rect.collidepoint(event.pos):
                         is_paused = False
+                        tetris_game_running = True
                     elif back_button.rect.collidepoint(event.pos):
                         tetris_game_running = False
                         is_paused = False
@@ -291,6 +304,7 @@ if __name__ == '__main__':
                     elif settings_button.rect.collidepoint(event.pos):
                         settings_open = True
                         while settings_open:
+                            play_music.set_volume(music_volume)
                             settings_ui.render(screen)
                             pygame.display.flip()
                             for settings_event in pygame.event.get():
@@ -299,7 +313,7 @@ if __name__ == '__main__':
                                     exit()
                                 if settings_event.type == pygame.KEYDOWN and settings_event.key == pygame.K_ESCAPE:
                                     settings_open = False
-                                settings_action = settings_ui.handle_event(settings_event)
+                                settings_action, music_volume = settings_ui.handle_event(settings_event)
                                 if settings_action == "back":
                                     settings_open = False
 
@@ -311,36 +325,46 @@ if __name__ == '__main__':
                     start_menu = False
                     tetris_game_running = True
 
+                elif event.type == pygame.USEREVENT:
+                    print('event_type')
+                    if event.button == results_button:
+                        show_statistic = True
+                        print('ok')
+
+            results_button.handle_event(event)
+
         # ЛОГИКА ОТОБРАЖЕНИЕ ЭКРАНОВ
         if start_menu:
-            screen.fill(settings_ui.bg_color)
-            main_menu()
-            menu_ui.handle_event(event)
-
-        elif tetris_game_running:
-            if is_paused:
-                screen.fill(settings_ui.bg_color)
-                back_button.draw(screen)
-                continue_button.draw(screen)
-                settings_button.draw(screen)
-                results_button.draw(screen)
-                quit_button.draw(screen)
+            if show_statistic:
+                ui_show_statistic(screen)
             else:
-                # ход игры
-                # логика тряски экрана при приземлении
-                flag_shake_y = gameplay(flag_shake_y)
+                screen.fill(settings_ui.bg_color)
+                main_menu()
+                menu_ui.handle_event(event)
 
-                font = pygame.font.SysFont(None, 30)
-                if settings_ui.bg_color == (255, 255, 255):
-                    score_text = font.render(f"Score: {score}", True, (0, 0, 0))
-                    level_text = font.render(f"Level: {level}", True, (0, 0, 0))
-                    screen.blit(level_text, (620, 20))
-                    screen.blit(score_text, (620, 70))
-                else:
-                    score_text = font.render(f"Score: {score}", True, (255, 255, 255))
-                    level_text = font.render(f"Level: {level}", True, (255, 255, 255))
-                    screen.blit(level_text, (620, 20))
-                    screen.blit(score_text, (620, 70))
+        if tetris_game_running:
+            # ход игры
+            # логика тряски экрана при приземлении
+            flag_shake_y = gameplay(flag_shake_y)
+
+            font = pygame.font.SysFont(None, 30)
+            if settings_ui.bg_color == (255, 255, 255):
+                score_text = font.render(f"Score: {score}", True, (0, 0, 0))
+                level_text = font.render(f"Level: {level}", True, (0, 0, 0))
+                screen.blit(level_text, (620, 20))
+                screen.blit(score_text, (620, 70))
+            else:
+                score_text = font.render(f"Score: {score}", True, (255, 255, 255))
+                level_text = font.render(f"Level: {level}", True, (255, 255, 255))
+                screen.blit(level_text, (620, 20))
+                screen.blit(score_text, (620, 70))
+
+        elif is_paused:
+            board.render(screen)
+            block.draw(screen)
+            back_button.draw(screen)
+            continue_button.draw(screen)
+            quit_button.draw(screen)
 
         elif defeat:
             board.render(screen)
@@ -352,12 +376,13 @@ if __name__ == '__main__':
         if tetris_game_running and block.is_ground:
             block, spawn_block_list, flag_shake_y = spawn_new_block(flag_shake_y, block,
                                                                     spawn_block_list=spawn_block_list)
-            if block:
+            if block:  # проверка на блок иначе на поражение
                 lines_filled = board.check_fill_line(particles_group)
+                # если при падении блока заполнилась линия, увеличить силу тряски
                 if lines_filled > 0:
                     score += lines_filled * 100
                     power_shake_y = 4
-                else:
+                else:  # иначе поставить её обычную
                     power_shake_y = 1
                 if score >= level * 1000:
                     level += 1
@@ -365,6 +390,7 @@ if __name__ == '__main__':
                 defeat = True
                 tetris_game_running = False
 
+        play_music.set_volume(music_volume)
         vertical_borders.clear()
         colliders.clear()
         clock.tick(FPS)

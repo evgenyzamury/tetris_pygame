@@ -119,13 +119,13 @@ class Board(pygame.sprite.Sprite):
             self.broken_block(x, y, particles_group)
 
     def broken_block(self, x, y, particles_group):
-        n = 7
+        amount_particles = 7
         left, top = self.rect.x, self.rect.y
         xx = left + self.cell_size * x
         yy = top + self.cell_size * y
-        for i in range(n):
-            for j in range(n):
-                Particle(particles_group, xx + self.cell_size // n * i, yy + self.cell_size // n * j, 5,
+        for i in range(amount_particles):
+            for j in range(amount_particles):
+                Particle(particles_group, xx + self.cell_size // amount_particles * i, yy + self.cell_size // amount_particles * j, 5,
                          COLOR[self.board[y][x] - 1][0])
 
     def fall_block_after_fill_lines(self, y, count):

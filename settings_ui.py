@@ -1,10 +1,13 @@
 import pygame
+from variables import WIDTH, HEIGHT, difficulty_list, language_list, theme_list
+from database import get_player_settings, update_player_settings
 
 
 class SettingsUI:
-    def __init__(self, width, height):
-        self.width = width
-        self.height = height
+    def __init__(self):
+        music_volume, block_volume, difficulty, language, theme = get_player_settings()
+        self.width = WIDTH
+        self.height = HEIGHT
         self.font = pygame.font.SysFont(None, 30)
 
         self.theme_colors = {
@@ -13,25 +16,26 @@ class SettingsUI:
         }
 
         self.options = {
-            "music_volume": 50,
-            "block_volume": 50,
-            "difficulty": "Medium",
-            "language": "English",
-            "theme": "Light",
+            "music_volume": music_volume,
+            "block_volume": block_volume,
+            "difficulty": difficulty,
+            "language": language,
+            "theme": theme,
         }
+        print(self.options)
 
         self.update_theme_colors()
 
         self.music_slider_rect = pygame.Rect(200, 100, 300, 10)
         self.block_slider_rect = pygame.Rect(200, 200, 300, 10)
         self.difficulty_buttons = [
-            {"text": "Easy", "rect": pygame.Rect(200, 300, 100, 40)},
-            {"text": "Medium", "rect": pygame.Rect(310, 300, 100, 40)},
-            {"text": "Impossible", "rect": pygame.Rect(420, 300, 150, 40)},
+            {"text": difficulty_list[0], "rect": pygame.Rect(200, 300, 100, 40)},
+            {"text": difficulty_list[1], "rect": pygame.Rect(310, 300, 100, 40)},
+            {"text": difficulty_list[2], "rect": pygame.Rect(420, 300, 150, 40)},
         ]
         self.language_buttons = [
-            {"text": "English", "rect": pygame.Rect(200, 400, 100, 40)},
-            {"text": "Русский", "rect": pygame.Rect(310, 400, 100, 40)},
+            {"text": language_list[0], "rect": pygame.Rect(200, 400, 100, 40)},
+            {"text": language_list[1], "rect": pygame.Rect(310, 400, 100, 40)},
         ]
         self.theme_buttons = [
             {"text": "Light", "rect": pygame.Rect(200, 500, 100, 40)},
@@ -41,11 +45,11 @@ class SettingsUI:
 
     def update_theme_colors(self):
         theme = self.options["theme"]
-        self.bg_color = self.theme_colors[theme]["bg"]
-        self.text_color = self.theme_colors[theme]["text"]
+        print(theme)
+        self.bg_color = self.theme_colors[theme_list[theme]]["bg"]
+        self.text_color = self.theme_colors[theme_list[theme]]["text"]
 
     def render(self, screen):
-        screen.fill((0, 0, 0))
         screen.fill(self.bg_color)
 
         title = self.font.render("Settings", True, self.text_color)
@@ -100,20 +104,43 @@ class SettingsUI:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if self.music_slider_rect.collidepoint(event.pos):
                 self.options["music_volume"] = max(0, min(100, (
-                            event.pos[0] - self.music_slider_rect.x) * 100 // self.music_slider_rect.width))
+                        event.pos[0] - self.music_slider_rect.x) * 100 // self.music_slider_rect.width))
+                print('ok')
+                print(self.options["music_volume"])
+                update_player_settings(self.options["music_volume"], self.options["block_volume"],
+                                       self.options["difficulty"],
+                                       self.options["language"], self.options["theme"])
+
             elif self.block_slider_rect.collidepoint(event.pos):
                 self.options["block_volume"] = max(0, min(100, (
-                            event.pos[0] - self.block_slider_rect.x) * 100 // self.block_slider_rect.width))
+                        event.pos[0] - self.block_slider_rect.x) * 100 // self.block_slider_rect.width))
+                update_player_settings(self.options["music_volume"], self.options["block_volume"],
+                                       self.options["difficulty"],
+                                       self.options["language"], self.options["theme"])
+
             elif self.back_button_rect.collidepoint(event.pos):
-                return "back"
+                return "back", self.options["music_volume"] / 100
+
             for button in self.difficulty_buttons:
                 if button["rect"].collidepoint(event.pos):
                     self.options["difficulty"] = button["text"]
+                    update_player_settings(self.options["music_volume"], self.options["block_volume"],
+                                           self.options["difficulty"],
+                                           self.options["language"], self.options["theme"])
+
             for button in self.language_buttons:
                 if button["rect"].collidepoint(event.pos):
                     self.options["language"] = button["text"]
+                    update_player_settings(self.options["music_volume"], self.options["block_volume"],
+                                           self.options["difficulty"],
+                                           self.options["language"], self.options["theme"])
+
             for button in self.theme_buttons:
                 if button["rect"].collidepoint(event.pos):
-                    self.options["theme"] = button["text"]
+                    self.options["theme"] = theme_list.index(button["text"])
                     self.update_theme_colors()
-        return None
+                    update_player_settings(self.options["music_volume"], self.options["block_volume"],
+                                           self.options["difficulty"],
+                                           self.options["language"], self.options["theme"])
+
+        return None, self.options["music_volume"] / 100

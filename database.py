@@ -41,6 +41,27 @@ def save_result_in_db(score, time):  # обновляем и сохраняем 
     print('данные в бд сохранены', best_score, all_score, all_time)
 
 
+def get_player_settings():
+    con = sqlite3.connect(database_path)
+    cur = con.cursor()
+    query = """SELECT * FROM settings INNER JOIN players on players.id = settings.player_id
+                       WHERE player = (SELECT player FROM players WHERE active_player = 1)"""
+    result = cur.execute(query).fetchone()
+    music_volume, block_volume, difficulty, language, theme = result[1], result[2], result[3], result[4], result[5]
+    return music_volume, block_volume, difficulty, language, theme
+
+
+def update_player_settings(music_volume, block_volume, difficulty, language, theme):
+    print(music_volume, block_volume, difficulty, language, theme)
+    con = sqlite3.connect(database_path)
+    cur = con.cursor()
+    query = """UPDATE settings SET music_volume = ?, block_volume = ?, difficulty = ?, language = ?, theme = ?
+                           WHERE player_id = (SELECT id FROM players WHERE active_player = 1)"""
+    cur.execute(query, (music_volume, block_volume, difficulty, language, theme))
+    con.commit()
+    con.close()
+
+
 def create_table():
     con = sqlite3.connect('data/tetris.db')
     cur = con.cursor()
@@ -63,6 +84,17 @@ def create_table():
     cur.execute(query)
     query = """INSERT INTO stats VALUES(1, 0, 0, 0);"""
     cur.execute(query)
+    query = """CREATE TABLE settings (
+    player_id    INTEGER REFERENCES players (id),
+    music_volume INTEGER,
+    block_volume INTEGER,
+    difficulty   INTEGER,
+    language     INTEGER,
+    theme        INTEGER
+    );
+    """
+    cur.execute(query)
+    query = """INSERT INTO settings VALUES(1, 50, 50, 0, 0, 0);"""
+    cur.execute(query)
     con.commit()
     con.close()
-

@@ -1,5 +1,6 @@
 SIZE = WIDTH, HEIGHT = 800, 900
 
+# Цвета для блоков
 COLOR = [['#c34046', '#b33a41', '#69262a', '#d1686e'],  # red
          ['#a3d350', '#7da837', '#709732', '#dbff86'],  # green
          ['#5c4aae', '#5444a0', '#4a3998', '#8b7dc6'],  # blue
@@ -9,4 +10,9 @@ COLOR = [['#c34046', '#b33a41', '#69262a', '#d1686e'],  # red
          ['#e5c749', '#d1b12f', '#947f27', '#c3b267'],  # yellow
          ]
 
+# Цвет тени блока
 SHADOW_COLOR = '#00DF00'
+
+difficulty_list = ["Easy", "Medium", "Impossible"]
+language_list = ["English", "Русский"]
+theme_list = ["Light", "Dark"]
