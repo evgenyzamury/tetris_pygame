@@ -73,7 +73,6 @@ class Block(pygame.sprite.Sprite):
             self.rect.x -= self.cell_size
             self.fill_rects(self.rects)
             if check_collide(self.rects, vertical_borders):
-                print(vertical_borders)
                 dx = -5
             if check_collide(self.rects, colliders) or self.is_ground:
                 self.rect.x += self.cell_size

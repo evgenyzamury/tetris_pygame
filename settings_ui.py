@@ -22,7 +22,6 @@ class SettingsUI:
             "language": language,
             "theme": theme,
         }
-        print(self.options)
 
         self.update_theme_colors()
 
@@ -45,7 +44,6 @@ class SettingsUI:
 
     def update_theme_colors(self):
         theme = self.options["theme"]
-        print(theme)
         self.bg_color = self.theme_colors[theme_list[theme]]["bg"]
         self.text_color = self.theme_colors[theme_list[theme]]["text"]
 
@@ -101,46 +99,48 @@ class SettingsUI:
                                 self.back_button_rect.y + (self.back_button_rect.height - back_text.get_height()) // 2))
 
     def handle_event(self, event):
+        # создадим переменную в которую будем записывать сигнал, если пользователь что-то поменяет
+        signal = None
+
         if event.type == pygame.MOUSEBUTTONDOWN:
+            # смена звук музыки
             if self.music_slider_rect.collidepoint(event.pos):
                 self.options["music_volume"] = max(0, min(100, (
                         event.pos[0] - self.music_slider_rect.x) * 100 // self.music_slider_rect.width))
-                print('ok')
-                print(self.options["music_volume"])
-                update_player_settings(self.options["music_volume"], self.options["block_volume"],
-                                       self.options["difficulty"],
-                                       self.options["language"], self.options["theme"])
+                signal = 'music volume'
 
+            # смена звука блока
             elif self.block_slider_rect.collidepoint(event.pos):
                 self.options["block_volume"] = max(0, min(100, (
                         event.pos[0] - self.block_slider_rect.x) * 100 // self.block_slider_rect.width))
-                update_player_settings(self.options["music_volume"], self.options["block_volume"],
-                                       self.options["difficulty"],
-                                       self.options["language"], self.options["theme"])
 
+            # сигнал кнопки назад
             elif self.back_button_rect.collidepoint(event.pos):
-                return "back", self.options["music_volume"] / 100
+                signal = 'back'
 
+            # ловим сигнал смены сложности
             for button in self.difficulty_buttons:
                 if button["rect"].collidepoint(event.pos):
                     self.options["difficulty"] = button["text"]
-                    update_player_settings(self.options["music_volume"], self.options["block_volume"],
-                                           self.options["difficulty"],
-                                           self.options["language"], self.options["theme"])
 
+            # ловим сигнал смены языка
             for button in self.language_buttons:
                 if button["rect"].collidepoint(event.pos):
                     self.options["language"] = button["text"]
-                    update_player_settings(self.options["music_volume"], self.options["block_volume"],
-                                           self.options["difficulty"],
-                                           self.options["language"], self.options["theme"])
 
+            # ловим темы
             for button in self.theme_buttons:
                 if button["rect"].collidepoint(event.pos):
-                    self.options["theme"] = theme_list.index(button["text"])
-                    self.update_theme_colors()
-                    update_player_settings(self.options["music_volume"], self.options["block_volume"],
-                                           self.options["difficulty"],
-                                           self.options["language"], self.options["theme"])
+                    # проверяем что нажата клавиша новой темы
+                    if self.options["theme"] != theme_list.index(button["text"]):
+                        self.options["theme"] = theme_list.index(button["text"])
+                        self.update_theme_colors()
+                        signal = 'theme'
 
-        return None, self.options["music_volume"] / 100
+        if signal:
+            # обновляем базу данных
+            update_player_settings(self.options["music_volume"], self.options["block_volume"],
+                                   self.options["difficulty"],
+                                   self.options["language"], self.options["theme"])
+
+        return signal
