@@ -148,7 +148,11 @@ def button_set(theme):
     back_to_menu_button = Button((WIDTH - 200) // 2, HEIGHT // 2 + 50 + 10, 200, 60, 'back to menu',
                                  ((0, 0, 0) if theme else (255, 255, 255)), hover_color='gray', text_size=30,
                                  theme=theme)
-    return pause_button, continue_button, back_to_menu_button
+
+    restart_button = Button((WIDTH - 200) // 2, HEIGHT // 2 + 100 + 30, 200, 60, 'restart',
+                            ((0, 0, 0) if theme else (255, 255, 255)), hover_color='gray', text_size=30, theme=theme)
+
+    return pause_button, continue_button, back_to_menu_button, restart_button
 
 
 if __name__ == '__main__':
@@ -191,15 +195,10 @@ if __name__ == '__main__':
     power_shake_y = 1  # сила тряски блока при приземлении
     speed = 1  # столько блоков в секунду падает блок
 
-    # список индексов блоков которые будут появляться
-    spawn_block_list = [(random.randint(0, 6), random.randint(0, 6)), (random.randint(0, 6), random.randint(0, 6))]
-    # спавним блок
-    block, spawn_block_list, flag_shake_y = spawn_new_block(flag_shake_y, spawn_block_list=spawn_block_list)
-
     pos = 0, 0
 
     # создадим кнопку паузу по теме
-    pause_button, continue_button, back_to_menu_button = button_set(theme)
+    pause_button, continue_button, back_to_menu_button, restart_button = button_set(theme)
 
     menu_ui = MenuUI(WIDTH, HEIGHT, theme)
 
@@ -237,15 +236,41 @@ if __name__ == '__main__':
                 if event.key == pygame.K_DOWN:  # перестаём ускорять блок если отпустили клавишу
                     block.speed = speed
 
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                if pause_button.rect.collidepoint(event.pos):
+            elif event.type == pygame.USEREVENT:
+                if event.button == pause_button:
                     is_paused = True
+                elif event.button == back_to_menu_button:  # возвращаемся в меню после поражения
+                    board.clear()
+                    defeat = False
+                    tetris_game_running = False
+                    start_menu = True
+                elif event.button == restart_button:  # перезапуск игры после поражения
+                    board.clear_destroy(particles_group)
+                    spawn_block_list = [(random.randint(0, 6), random.randint(0, 6)),
+                                        (random.randint(0, 6), random.randint(0, 6))]
+                    # спавним блок
+                    block, spawn_block_list, flag_shake_y = spawn_new_block(flag_shake_y,
+                                                                            spawn_block_list=spawn_block_list)
+                    start_menu = False
+                    tetris_game_running = True
+
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                pause_button.handle_event(event)
+                if defeat:  # ловим кнопки при поражении
+                    back_to_menu_button.handle_event(event)
+                    restart_button.handle_event(event)
 
                 # Логика для главного меню
                 if start_menu:
                     action = menu_ui.get_button_action(event)  # ловим действие происходящее в меню
 
                     if action == 'Continue' and start_menu:  # нажата клавиша continue
+                        # список индексов блоков которые будут появляться
+                        spawn_block_list = [(random.randint(0, 6), random.randint(0, 6)),
+                                            (random.randint(0, 6), random.randint(0, 6))]
+                        # спавним блок
+                        block, spawn_block_list, flag_shake_y = spawn_new_block(flag_shake_y,
+                                                                                spawn_block_list=spawn_block_list)
                         start_menu = False
                         tetris_game_running = True
 
@@ -282,7 +307,8 @@ if __name__ == '__main__':
                                 elif settings_action == "theme":
                                     menu_ui.change_theme()
                                     theme = int(not theme)
-                                    pause_button, continue_button, back_to_menu_button = button_set(theme)
+                                    pause_button, continue_button, back_to_menu_button, restart_button = button_set(
+                                        theme)
 
                                 # последняя сточка настроек
 
@@ -371,6 +397,10 @@ if __name__ == '__main__':
             font = pygame.font.SysFont(None, 100)
             img = font.render("YOU LOSE!", 1, (255, 255, 255), (0, 0, 0))
             screen.blit(img, (WIDTH // 2 - img.get_width() // 2, HEIGHT // 2 - img.get_height()))
+            restart_button.check_hover(pos)
+            restart_button.draw(screen)
+            back_to_menu_button.check_hover(pos)
+            back_to_menu_button.draw(screen)
 
         # Проверка игры и логика спавна нового блока
         if tetris_game_running and block.is_ground:

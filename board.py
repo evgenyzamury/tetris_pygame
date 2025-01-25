@@ -125,7 +125,8 @@ class Board(pygame.sprite.Sprite):
         yy = top + self.cell_size * y
         for i in range(amount_particles):
             for j in range(amount_particles):
-                Particle(particles_group, xx + self.cell_size // amount_particles * i, yy + self.cell_size // amount_particles * j, 5,
+                Particle(particles_group, xx + self.cell_size // amount_particles * i,
+                         yy + self.cell_size // amount_particles * j, 5,
                          COLOR[self.board[y][x] - 1][0])
 
     def fall_block_after_fill_lines(self, y, count):
@@ -134,6 +135,17 @@ class Board(pygame.sprite.Sprite):
             board = copy.deepcopy(self.board)
             for i in range(y[index], 0, -1):
                 self.board[i] = board[i - 1]
+
+    def clear(self):
+        self.board = [[0] * self.width for _ in range(self.height)]
+
+    def clear_destroy(self, particles_group):
+        for y in range(self.height):
+            for x in range(self.width):
+                print(x, y)
+                if self.board[y][x]:
+                    self.broken_block(x, y, particles_group)
+                    self.board[y][x] = 0
 
 
 class Particle(pygame.sprite.Sprite):
