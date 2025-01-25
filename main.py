@@ -138,6 +138,19 @@ def show_next_block():  # показывает следующий блок ко�
     show_block.draw(screen)
 
 
+def button_set(theme):
+    pause_button = Button(WIDTH - 770, 20, 80, 40, 'Pause', ((0, 0, 0) if theme else (255, 255, 255)),
+                          hover_color='gray', text_size=30, theme=theme)
+
+    continue_button = Button((WIDTH - 200) // 2, HEIGHT // 2 - 50 - 10, 200, 60, 'continue',
+                             ((0, 0, 0) if theme else (255, 255, 255)), hover_color='gray', text_size=30, theme=theme)
+
+    back_to_menu_button = Button((WIDTH - 200) // 2, HEIGHT // 2 + 50 + 10, 200, 60, 'back to menu',
+                                 ((0, 0, 0) if theme else (255, 255, 255)), hover_color='gray', text_size=30,
+                                 theme=theme)
+    return pause_button, continue_button, back_to_menu_button
+
+
 if __name__ == '__main__':
     pygame.init()
 
@@ -186,8 +199,7 @@ if __name__ == '__main__':
     pos = 0, 0
 
     # создадим кнопку паузу по теме
-    pause_button = Button(WIDTH - 770, 20, 80, 40, 'Pause', ((0, 0, 0) if theme else (255, 255, 255)),
-                          hover_color='gray', text_size=30, theme=theme)
+    pause_button, continue_button, back_to_menu_button = button_set(theme)
 
     menu_ui = MenuUI(WIDTH, HEIGHT, theme)
 
@@ -270,9 +282,7 @@ if __name__ == '__main__':
                                 elif settings_action == "theme":
                                     menu_ui.change_theme()
                                     theme = int(not theme)
-                                    pause_button = Button(WIDTH - 770, 20, 80, 40, 'Pause',
-                                                          ((0, 0, 0) if theme else (255, 255, 255)),
-                                                          hover_color='gray', text_size=30, theme=theme)
+                                    pause_button, continue_button, back_to_menu_button = button_set(theme)
 
                                 # последняя сточка настроек
 
@@ -291,6 +301,8 @@ if __name__ == '__main__':
         # Логика паузы
         if is_paused:
             while is_paused:
+                font = pygame.font.Font(None, 64)
+                font_score = pygame.font.SysFont(None, 30)
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         is_paused = False
@@ -299,17 +311,25 @@ if __name__ == '__main__':
                         is_paused = False
                     if event.type == pygame.MOUSEMOTION:
                         pos = event.pos
+                    if event.type == pygame.USEREVENT:
+                        if event.button == back_to_menu_button:  # нажали на клавишу back to menu возвращаемся в лобби
+                            is_paused = False
+                            tetris_game_running = False
+                            start_menu = True
+                        if event.button == continue_button:  # нажали на продолжить, продолжаем игру
+                            is_paused = False
+
+                    #  ловим нажатие кнопки
+                    back_to_menu_button.handle_event(event)
+                    continue_button.handle_event(event)
 
                 board.render(screen)  # рисуем игровое поле
                 block.draw(screen)  # рисуем активный блок
 
                 # надпись PAUSED
-                font = pygame.font.Font(None, 64)
                 img_font = font.render('PAUSED', 1, ((255, 255, 255) if theme else (0, 0, 0)))
-
                 # надпись кол-во очков
-                font = pygame.font.SysFont(None, 30)
-                score_text = font.render(f"Score: {score}", True, ((255, 255, 255) if theme else (0, 0, 0)))
+                score_text = font_score.render(f"Score: {score}", True, ((255, 255, 255) if theme else (0, 0, 0)))
 
                 # выводим надписи на экран
                 screen.blit(score_text, (620, 70))
@@ -318,6 +338,10 @@ if __name__ == '__main__':
                 # рисуем следующий блок
                 show_next_block()
 
+                continue_button.check_hover(pos)
+                continue_button.draw(screen)
+                back_to_menu_button.check_hover(pos)
+                back_to_menu_button.draw(screen)
                 pause_button.check_hover(pos)
                 pause_button.draw(screen)  # рисуем паузу
 
@@ -337,13 +361,10 @@ if __name__ == '__main__':
             # логика тряски экрана при приземлении
             flag_shake_y = gameplay(flag_shake_y)
 
+            # рисуем очки
             font = pygame.font.SysFont(None, 30)
-            if theme:
-                score_text = font.render(f"Score: {score}", True, (255, 255, 255))
-                screen.blit(score_text, (620, 70))
-            else:
-                score_text = font.render(f"Score: {score}", True, (0, 0, 0))
-                screen.blit(score_text, (620, 70))
+            score_text = font.render(f"Score: {score}", True, (255, 255, 255) if theme else (0, 0, 0))
+            screen.blit(score_text, (620, 70))
 
         elif defeat:
             board.render(screen)

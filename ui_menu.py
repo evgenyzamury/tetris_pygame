@@ -1,13 +1,11 @@
 import pygame
 from button import Button
-from settings_ui import SettingsUI
 
 
 class MenuUI:
     def __init__(self, width, height, theme):
         self.width = width
         self.height = height
-        self.sound = pygame.mixer.Sound('data/sounds/button.mp3')
         self.buttons = []
         self.theme = theme
 
@@ -35,21 +33,23 @@ class MenuUI:
         spacing = 20
         center_x = self.width // 2 - button_width // 2
         start_y = self.height // 2 - (2 * button_height + 1.5 * spacing)
-        self.continue_button = Button(center_x, start_y, button_width, button_height, 'Continue', 'black',
+        continue_button = Button(center_x, start_y, button_width, button_height, 'Continue',
+                                      ((0, 0, 0) if self.theme else (255, 255, 255)),
                                       hover_color='gray', text_size=30, theme=self.theme)
-        self.settings_button = Button(center_x, start_y + button_height + spacing, button_width, button_height,
-                                      'Settings', 'black', hover_color='gray', text_size=30, theme=self.theme)
-        self.results_button = Button(center_x, start_y + 2 * (button_height + spacing), button_width,
-                                     button_height, 'Results', 'black', hover_color='gray', text_size=30,
-                                     theme=self.theme)
-        self.save_exit_button = Button(center_x, start_y + 3 * (button_height + spacing), button_width,
-                                       button_height, 'Save and Exit', 'black', hover_color='gray',
-                                       text_size=30, theme=self.theme)
+        settings_button = Button(center_x, start_y + button_height + spacing, button_width, button_height,
+                                      'Settings', ((0, 0, 0) if self.theme else (255, 255, 255)), hover_color='gray',
+                                      text_size=30, theme=self.theme)
+        results_button = Button(center_x, start_y + 2 * (button_height + spacing), button_width,
+                                     button_height, 'Results', ((0, 0, 0) if self.theme else (255, 255, 255)),
+                                     hover_color='gray', text_size=30, theme=self.theme)
+        save_exit_button = Button(center_x, start_y + 3 * (button_height + spacing), button_width,
+                                       button_height, 'Save and Exit', ((0, 0, 0) if self.theme else (255, 255, 255)),
+                                       hover_color='gray', text_size=30, theme=self.theme)
         self.buttons = [
-            self.continue_button,
-            self.settings_button,
-            self.results_button,
-            self.save_exit_button
+            continue_button,
+            settings_button,
+            results_button,
+            save_exit_button
         ]
 
     def change_theme(self):
