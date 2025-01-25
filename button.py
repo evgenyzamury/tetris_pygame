@@ -26,6 +26,7 @@ class Button:
         text_surface = self.font.render(self.text, True, self.text_color)
         screen.blit(text_surface, (self.rect.x + (self.rect.width - text_surface.get_width()) // 2,
                                    self.rect.y + (self.rect.height - text_surface.get_height()) // 2))
+        pygame.draw.rect(screen, self.text_color, self.rect, 1)
 
     def check_hover(self, pos):  # проверяем навились ли мы на кнопку`
         if self.rect.collidepoint(pos):
