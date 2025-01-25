@@ -13,7 +13,7 @@ def get_statistic():  # получаем статистику активного
     con.close()
     best_score = result[1]
     all_score = result[2]
-    play_time = result[3]
+    play_time = result[3] // 60
     return best_score, all_score, play_time
 
 

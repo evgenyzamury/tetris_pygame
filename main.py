@@ -77,7 +77,7 @@ def gameplay(flag_shake_y):
     particles_group.draw(screen)  # рисуем все частицы
 
     show_next_block()  # рисуем следующий блок
-
+    show_time(pygame.time.get_ticks())  # отображаем время проведенное в матче
     pause_button.check_hover(pos)
     pause_button.draw(screen)  # рисуем паузу
 
@@ -136,6 +136,17 @@ def show_next_block():  # показывает следующий блок ко�
     # вызываем класс блока и рисуем его на экране
     show_block = BLOCKS[block_index](all_group, x - 70, y + 50, 20, 0, color_index)
     show_block.draw(screen)
+
+
+def show_time(ticks):
+    font = pygame.font.SysFont(None, 30)
+    time = (ticks - start_time) // 1000
+    time = f'{time // 60:02d}:' + f'{time % 60:02d}'
+    img_time = font.render(time, 1, (255, 255, 255) if theme else (0, 0, 0))
+    img_time_text = font.render('Time', 1, (255, 255, 255) if theme else (0, 0, 0))
+
+    screen.blit(img_time_text, (660, 140))
+    screen.blit(img_time, (670 + img_time_text.get_width(), 140))
 
 
 def button_set(theme):
@@ -212,6 +223,8 @@ if __name__ == '__main__':
     while running:
         # показ фпс
         fps = int(clock.get_fps())
+        if fps < 60:
+            fps = 60
         pygame.display.set_caption(f'fps - {fps}')
         board.update(colliders, vertical_borders)
         # заливаем фон цветом темы
@@ -252,6 +265,9 @@ if __name__ == '__main__':
                     # спавним блок
                     block, spawn_block_list, flag_shake_y = spawn_new_block(flag_shake_y,
                                                                             spawn_block_list=spawn_block_list)
+                    score = 0
+                    start_time = pygame.time.get_ticks()
+                    defeat = False
                     start_menu = False
                     tetris_game_running = True
 
@@ -272,6 +288,7 @@ if __name__ == '__main__':
                         # спавним блок
                         block, spawn_block_list, flag_shake_y = spawn_new_block(flag_shake_y,
                                                                                 spawn_block_list=spawn_block_list)
+                        start_time = pygame.time.get_ticks()
                         start_menu = False
                         tetris_game_running = True
 
@@ -327,6 +344,7 @@ if __name__ == '__main__':
 
         # Логика паузы
         if is_paused:
+            pause_time = pygame.time.get_ticks()
             while is_paused:
                 font = pygame.font.Font(None, 64)
                 font_score = pygame.font.SysFont(None, 30)
@@ -372,7 +390,10 @@ if __name__ == '__main__':
                 pause_button.check_hover(pos)
                 pause_button.draw(screen)  # рисуем паузу
 
+                show_time(pause_time)
                 pygame.display.flip()
+
+            start_time += pygame.time.get_ticks() - pause_time
 
         # ЛОГИКА ОТОБРАЖЕНИЕ ЭКРАНОВ
         if start_menu:
@@ -391,12 +412,16 @@ if __name__ == '__main__':
             # рисуем очки
             font = pygame.font.SysFont(None, 30)
             score_text = font.render(f"Score: {score}", True, (255, 255, 255) if theme else (0, 0, 0))
-            screen.blit(score_text, (620, 70))
+            screen.blit(score_text, (640, 70))
 
         elif defeat:
+            show_time(end_time - start_time)
+            font = pygame.font.SysFont(None, 30)
+            score_text = font.render(f"Score: {score}", True, (255, 255, 255) if theme else (0, 0, 0))
+            screen.blit(score_text, (640, 70))
             board.render(screen)
             font = pygame.font.SysFont(None, 100)
-            img = font.render("YOU LOSE!", 1, (255, 255, 255), (0, 0, 0))
+            img = font.render("YOU LOSE !", 1, (255, 255, 255) if theme else (0, 0, 0))
             screen.blit(img, (WIDTH // 2 - img.get_width() // 2, HEIGHT // 2 - img.get_height()))
             restart_button.check_hover(pos)
             restart_button.draw(screen)
@@ -416,6 +441,9 @@ if __name__ == '__main__':
                 else:  # иначе поставить её обычную
                     power_shake_y = 1
             else:
+                # Момент поражения в игре
+                end_time = pygame.time.get_ticks()
+                save_result_in_db(score, (end_time - start_time) // 1000)
                 defeat = True
                 tetris_game_running = False
 

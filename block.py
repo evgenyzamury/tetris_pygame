@@ -44,10 +44,8 @@ class Block(pygame.sprite.Sprite):
                     self.sound_fall.play()
                 if check_collide(self.rects, colliders):
                     self.rect.y -= 40
-                    if self.ground_more_time:
-                        self.is_ground = True
-                    else:
-                        self.ground_more_time = True
+                    self.fill_rects(self.rects)
+                    self.is_ground = True
             self.tick = 0
         self.fill_rects(self.rects)
 
@@ -77,7 +75,6 @@ class Block(pygame.sprite.Sprite):
             if check_collide(self.rects, colliders) or self.is_ground:
                 self.rect.x += self.cell_size
                 self.fill_rects(self.rects)
-
         return dx
 
     def instant_fall(self, horizontal_colliders):  # мгновенное падение блока
