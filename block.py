@@ -33,8 +33,8 @@ class Block(pygame.sprite.Sprite):
     def __repr__(self):
         return f'Block({self.cell_size} {self.speed} {self.color_index})'
 
-    def update(self, colliders, insta_fall=False):  # функция падения блока
-        self.tick += self.speed / 60
+    def update(self, colliders, fps, insta_fall=False):  # функция падения блока
+        self.tick += self.speed / fps
         if self.tick >= 1:
             if not self.is_ground:
                 self.rect.y += 40
@@ -51,9 +51,9 @@ class Block(pygame.sprite.Sprite):
             self.tick = 0
         self.fill_rects(self.rects)
 
-    def move_right(self, colliders, vertical_borders):  # движение блока вправо
+    def move_right(self, colliders, vertical_borders, fps):  # движение блока вправо
         dx = 0
-        self.move_tick += 10 / 60
+        self.move_tick += 10 / fps
         if self.move_tick > 1:
             self.move_tick = 0
             self.rect.x += self.cell_size
@@ -65,9 +65,9 @@ class Block(pygame.sprite.Sprite):
                 self.fill_rects(self.rects)
         return dx
 
-    def move_left(self, colliders, vertical_borders):  # движение блока влево
+    def move_left(self, colliders, vertical_borders, fps):  # движение блока влево
         dx = 0
-        self.move_tick += 10 / 60
+        self.move_tick += 10 / fps
         if self.move_tick > 1:
             self.move_tick = 0
             self.rect.x -= self.cell_size
@@ -86,7 +86,7 @@ class Block(pygame.sprite.Sprite):
         speed = self.speed
         self.speed = 100
         while not self.is_ground:
-            self.update(horizontal_colliders, insta_fall=True)
+            self.update(horizontal_colliders, 1, insta_fall=True)
         self.speed = speed
 
     def rotation(self, colliders):  # поворачивает блок на 90 градусов

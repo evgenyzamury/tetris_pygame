@@ -13,7 +13,7 @@ from UI_statistik import ui_show_statistic
 from database import *
 
 SIZE = WIDTH, HEIGHT = 800, 900
-FPS = 60
+FPS = 1650
 
 BLOCKS = [ZBlock, SBlock, IBlock, LBlock, TBlock, JBlock, OBlock]
 
@@ -50,12 +50,12 @@ def gameplay(flag_shake_y):
     # двигаем блок вправо
     if key[pygame.K_RIGHT]:
         # если мы касаемся игрового поля, сдвигаем его (для приятного эффекта столкновения с границей поля)
-        dx = block.move_right(colliders, vertical_borders)
+        dx = block.move_right(colliders, vertical_borders, fps)
         if board.rect.x > left:  # ограничиваем отклонения поля вправо
             dx = 0
     elif key[pygame.K_LEFT]:
         # если мы касаемся игрового поля, сдвигаем его (для приятного эффекта столкновения с границей поля)
-        dx = block.move_left(colliders, vertical_borders)
+        dx = block.move_left(colliders, vertical_borders, fps)
         if board.rect.x < left:  # ограничиваем отклонения поля влево
             dx = 0
     else:
@@ -69,11 +69,11 @@ def gameplay(flag_shake_y):
 
     board.render(screen)  # рисуем игровое поле
 
-    block.update(colliders)  # обновляем блок
+    block.update(colliders, fps)  # обновляем блок
     block.shadow(screen, colliders)  # рисуем тень блока (куда он падает)
     block.draw(screen)  # рисуем блок
 
-    particles_group.update()  # обновляем все частицы
+    particles_group.update(fps)  # обновляем все частицы
     particles_group.draw(screen)  # рисуем все частицы
 
     show_next_block()  # рисуем следующий блок
@@ -211,7 +211,8 @@ if __name__ == '__main__':
 
     while running:
         # показ фпс
-        pygame.display.set_caption(f'fps - {int(clock.get_fps())}')
+        fps = int(clock.get_fps())
+        pygame.display.set_caption(f'fps - {fps}')
         board.update(colliders, vertical_borders)
         # заливаем фон цветом темы
         screen.fill(settings_ui.bg_color)

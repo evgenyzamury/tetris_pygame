@@ -156,14 +156,18 @@ class Particle(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft=(x, y))
         self.velocity = [random.randint(-3, 3), random.randint(-3, 4)]
         self.gravity = 0.15
+        self.tick = 0
 
-    def update(self):
-        # применяем гравитационный эффект:
-        # движение с ускорением под действием гравитации
-        self.velocity[1] += self.gravity
-        # перемещаем частицу
-        self.rect.x += self.velocity[0]
-        self.rect.y += self.velocity[1]
-        # убиваем, если частица ушла за экран
-        if not self.rect.colliderect(screen_rect):
-            self.kill()
+    def update(self, fps):
+        self.tick += 60 / fps
+        if self.tick >= 1:
+            # применяем гравитационный эффект:
+            # движение с ускорением под действием гравитации
+            self.velocity[1] += self.gravity
+            # перемещаем частицу
+            self.rect.x += self.velocity[0]
+            self.rect.y += self.velocity[1]
+            # убиваем, если частица ушла за экран
+            if not self.rect.colliderect(screen_rect):
+                self.kill()
+            self.tick = 0
