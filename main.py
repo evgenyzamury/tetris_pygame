@@ -27,9 +27,6 @@ level = 1
 is_paused = False
 result_show = False
 
-music_volume, block_volume, difficulty, language, theme = get_player_settings()
-music_volume = music_volume / 100
-
 
 def gameplay(flag_shake_y):
     dx = dy = 0
@@ -176,6 +173,9 @@ if __name__ == '__main__':
         if not os.path.isdir('data'):
             os.mkdir('data')
         create_table()
+
+    music_volume, block_volume, difficulty, language, theme = get_player_settings()
+    music_volume = music_volume / 100
 
     screen = pygame.display.set_mode(SIZE)
     pygame.display.set_caption('tetris')
