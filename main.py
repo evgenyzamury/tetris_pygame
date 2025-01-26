@@ -12,6 +12,8 @@ from settings_ui import SettingsUI
 from UI_statistik import ui_show_statistic
 from database import *
 
+
+
 SIZE = WIDTH, HEIGHT = 800, 900
 FPS = 1650
 
@@ -25,9 +27,6 @@ level = 1
 
 is_paused = False
 result_show = False
-
-music_volume, block_volume, difficulty, language, theme = get_player_settings()
-music_volume = music_volume / 100
 
 
 def gameplay(flag_shake_y):
@@ -168,7 +167,6 @@ def button_set(theme):
 
 if __name__ == '__main__':
     pygame.init()
-
     # проверяем на наличие базы данных, если нету создаём пустую
     if not os.path.isfile(database_path):
         if not os.path.isdir('data'):
@@ -208,6 +206,9 @@ if __name__ == '__main__':
 
     pos = 0, 0
 
+    music_volume, block_volume, difficulty, language, theme = get_player_settings()
+    music_volume = music_volume / 100
+
     # создадим кнопку паузу по теме
     pause_button, continue_button, back_to_menu_button, restart_button = button_set(theme)
 
@@ -243,7 +244,6 @@ if __name__ == '__main__':
                 if event.key == pygame.K_SPACE:  # нажали на пробел - моментальный моментальное падение блока
                     block.instant_fall(colliders)
                 if event.key == pygame.K_ESCAPE:
-                    print('ok')
                     is_paused = True
 
             elif tetris_game_running and event.type == pygame.KEYUP:  # отслеживаем отпускание клавиш в игровом процессе
