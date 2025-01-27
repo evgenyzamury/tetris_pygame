@@ -12,13 +12,10 @@ from settings_ui import SettingsUI
 from UI_statistik import ui_show_statistic
 from database import *
 
-
-
 SIZE = WIDTH, HEIGHT = 800, 900
 FPS = 1650
 
 BLOCKS = [ZBlock, SBlock, IBlock, LBlock, TBlock, JBlock, OBlock]
-BLOCKS = [IBlock, IBlock, IBlock, IBlock, IBlock, IBlock, IBlock]
 
 story_line = []
 index_story = -1
@@ -401,6 +398,7 @@ if __name__ == '__main__':
         if start_menu:
             if show_statistic:
                 ui_show_statistic(screen)
+                show_statistic = False
             else:
                 screen.fill(settings_ui.bg_color)
                 main_menu()
@@ -449,7 +447,6 @@ if __name__ == '__main__':
                 defeat = True
                 tetris_game_running = False
 
-        print(len(all_group))
         play_music.set_volume(music_volume)
         clock.tick(FPS)
         pygame.display.flip()
