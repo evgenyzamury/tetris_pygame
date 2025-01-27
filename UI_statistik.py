@@ -58,6 +58,7 @@ def ui_show_statistic(screen):
                 if back_button.rect.collidepoint(event.pos):
                     menu_ui.render(screen)
                     running = False
+
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 menu_ui.render(screen)
                 running = False
