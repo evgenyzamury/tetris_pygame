@@ -1,4 +1,6 @@
 import pygame
+
+import blocks
 from variables import WIDTH, HEIGHT, difficulty_list, language_list, theme_list
 from database import get_player_settings, update_player_settings
 
@@ -98,7 +100,7 @@ class SettingsUI:
         screen.blit(back_text, (self.back_button_rect.x + (self.back_button_rect.width - back_text.get_width()) // 2,
                                 self.back_button_rect.y + (self.back_button_rect.height - back_text.get_height()) // 2))
 
-    def handle_event(self, event):
+    def handle_event(self, event, speed):
         # создадим переменную в которую будем записывать сигнал, если пользователь что-то поменяет
         signal = None
 
@@ -120,8 +122,19 @@ class SettingsUI:
 
             # ловим сигнал смены сложности
             for button in self.difficulty_buttons:
-                if button["rect"].collidepoint(event.pos):
-                    self.options["difficulty"] = button["text"]
+                if button["rect"].collidepoint(event.pos):  # Если пользователь кликнул по кнопке
+                    selected_difficulty = button["text"]
+                    self.options["difficulty"] = selected_difficulty  # Обновляем выбранную сложность
+
+                    # Установка скорости в зависимости от сложности
+                    if selected_difficulty == 'Easy':
+                        self.options['block_speed'] = 1
+                    elif selected_difficulty == 'Medium':
+                        self.options['block_speed'] = 3
+                    elif selected_difficulty == 'Impossible':
+                        self.options['block_speed'] = 10
+
+                    signal = 'difficulty'
 
             # ловим сигнал смены языка
             for button in self.language_buttons:

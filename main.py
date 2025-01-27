@@ -202,7 +202,7 @@ if __name__ == '__main__':
     board.set_view(left, top, cell_size)
 
     power_shake_y = 1  # сила тряски блока при приземлении
-    speed = 1  # столько блоков в секунду падает блок
+    speed = settings_ui.options.get('block_speed', 1)  # столько блоков в секунду падает блок
 
     pos = 0, 0
 
@@ -302,7 +302,7 @@ if __name__ == '__main__':
                             for settings_event in pygame.event.get():
 
                                 # передаём event в обработку в настройки
-                                settings_action = settings_ui.handle_event(settings_event)
+                                settings_action = settings_ui.handle_event(settings_event, speed)
 
                                 if settings_event.type == pygame.QUIT:
                                     running = False
@@ -319,6 +319,9 @@ if __name__ == '__main__':
                                 # если был изменен ползунок звука
                                 elif settings_action == "music volume":
                                     music_volume = settings_ui.options['music_volume'] / 100
+
+                                elif settings_action == "difficulty":
+                                    speed = settings_ui.options.get('block_speed')
 
                                 # смена цветовой темы приложения
                                 elif settings_action == "theme":
