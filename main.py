@@ -18,6 +18,7 @@ SIZE = WIDTH, HEIGHT = 800, 900
 FPS = 1650
 
 BLOCKS = [ZBlock, SBlock, IBlock, LBlock, TBlock, JBlock, OBlock]
+BLOCKS = [IBlock, IBlock, IBlock, IBlock, IBlock, IBlock, IBlock]
 
 story_line = []
 index_story = -1
@@ -49,12 +50,12 @@ def gameplay(flag_shake_y):
     # двигаем блок вправо
     if key[pygame.K_RIGHT]:
         # если мы касаемся игрового поля, сдвигаем его (для приятного эффекта столкновения с границей поля)
-        dx = block.move_right(colliders, vertical_borders, fps)
+        dx = block.move_right(board, fps)
         if board.rect.x > left:  # ограничиваем отклонения поля вправо
             dx = 0
     elif key[pygame.K_LEFT]:
         # если мы касаемся игрового поля, сдвигаем его (для приятного эффекта столкновения с границей поля)
-        dx = block.move_left(colliders, vertical_borders, fps)
+        dx = block.move_left(board, fps)
         if board.rect.x < left:  # ограничиваем отклонения поля влево
             dx = 0
     else:
@@ -65,11 +66,11 @@ def gameplay(flag_shake_y):
             dx += 5
         # если ничего не произошло ставим блок в готовность хода для моментального реагирования при нажатии клавиши < >
         block.move_tick = 1
-
     board.render(screen)  # рисуем игровое поле
 
-    block.update(colliders, fps)  # обновляем блок
-    block.shadow(screen, colliders)  # рисуем тень блока (куда он падает)
+    # обновляем блок, передаём туда поле и координаты блока для проверки на столкновение
+    block.update(board, fps)
+    block.shadow(screen, board)  # рисуем тень блока (куда он падает)
     block.draw(screen)  # рисуем блок
 
     particles_group.update(fps)  # обновляем все частицы
@@ -134,6 +135,7 @@ def show_next_block():  # показывает следующий блок ко�
 
     # вызываем класс блока и рисуем его на экране
     show_block = BLOCKS[block_index](all_group, x - 70, y + 50, 20, 0, color_index)
+    show_block.kill()  # убиваем его из группы он там не нужен
     show_block.draw(screen)
 
 
@@ -173,6 +175,9 @@ if __name__ == '__main__':
             os.mkdir('data')
         create_table()
 
+    music_volume, block_volume, difficulty, language, theme = get_player_settings()
+    music_volume = music_volume / 100
+
     screen = pygame.display.set_mode(SIZE)
     pygame.display.set_caption('tetris')
     settings_ui = SettingsUI()
@@ -195,11 +200,9 @@ if __name__ == '__main__':
     cell_size = 40
     cell_height = 21
     cell_width = 10
-    colliders = []
-    vertical_borders = []
     left = (WIDTH - (cell_width * cell_size)) // 2
     top = (HEIGHT - (cell_height * cell_size)) // 2 - 30
-    board.set_view(left, top, cell_size, colliders, vertical_borders)
+    board.set_view(left, top, cell_size)
 
     power_shake_y = 1  # сила тряски блока при приземлении
     speed = 1  # столько блоков в секунду падает блок
@@ -227,7 +230,6 @@ if __name__ == '__main__':
         if fps < 60:
             fps = 60
         pygame.display.set_caption(f'fps - {fps}')
-        board.update(colliders, vertical_borders)
         # заливаем фон цветом темы
         screen.fill(settings_ui.bg_color)
 
@@ -240,9 +242,9 @@ if __name__ == '__main__':
 
             if tetris_game_running and event.type == pygame.KEYDOWN:  # отслеживаем нажатие клавиш в игровом процессе
                 if event.key == pygame.K_UP:  # нажали на стрелочку вверх - переворачиваем блок на 90 градусов
-                    block.rotation(colliders)
+                    block.rotation(board)
                 if event.key == pygame.K_SPACE:  # нажали на пробел - моментальный моментальное падение блока
-                    block.instant_fall(colliders)
+                    block.instant_fall(board)
                 if event.key == pygame.K_ESCAPE:
                     is_paused = True
 
@@ -447,9 +449,8 @@ if __name__ == '__main__':
                 defeat = True
                 tetris_game_running = False
 
+        print(len(all_group))
         play_music.set_volume(music_volume)
-        vertical_borders.clear()
-        colliders.clear()
         clock.tick(FPS)
         pygame.display.flip()
 
