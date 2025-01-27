@@ -1,4 +1,5 @@
 import pygame
+import numpy as np
 from block import Block
 
 
@@ -9,8 +10,8 @@ class TBlock(Block):
         self.rect = self.image.get_rect()
         self.rect.x = left + cell_size * 4
         self.rect.y = top
-        self.cords = [[0, 1, 0],
-                      [1, 1, 1]]
+        self.cords = np.array([[0, 1, 0],
+                               [1, 1, 1]], dtype=np.int8)
         self.fill_rects(self.rects)
 
 
@@ -21,8 +22,8 @@ class SBlock(Block):
         self.rect = self.image.get_rect()
         self.rect.x = left + cell_size * 4
         self.rect.y = top
-        self.cords = [[0, 1, 1],
-                      [1, 1, 0]]
+        self.cords = np.array([[0, 1, 1],
+                               [1, 1, 0]], dtype=np.int8)
         self.fill_rects(self.rects)
 
 
@@ -33,8 +34,8 @@ class OBlock(Block):
         self.rect = self.image.get_rect()
         self.rect.x = left + cell_size * 4
         self.rect.y = top
-        self.cords = [[1, 1],
-                      [1, 1]]
+        self.cords = np.array([[1, 1],
+                               [1, 1]], dtype=np.int8)
         self.fill_rects(self.rects)
 
 
@@ -45,10 +46,10 @@ class IBlock(Block):
         self.rect = self.image.get_rect()
         self.rect.x = left + cell_size * 3
         self.rect.y = top
-        self.cords = [[0, 0, 0, 0],
-                      [1, 1, 1, 1],
-                      [0, 0, 0, 0],
-                      [0, 0, 0, 0]]
+        self.cords = np.array([[0, 0, 0, 0],
+                               [1, 1, 1, 1],
+                               [0, 0, 0, 0],
+                               [0, 0, 0, 0]], dtype=np.int8)
         self.fill_rects(self.rects)
 
 
@@ -59,8 +60,8 @@ class LBlock(Block):
         self.rect = self.image.get_rect()
         self.rect.x = left + cell_size * 4
         self.rect.y = top
-        self.cords = [[0, 0, 1],
-                      [1, 1, 1]]
+        self.cords = np.array([[0, 0, 1],
+                               [1, 1, 1]], dtype=np.int8)
         self.fill_rects(self.rects)
 
 
@@ -71,8 +72,8 @@ class JBlock(Block):
         self.rect = self.image.get_rect()
         self.rect.x = left + cell_size * 4
         self.rect.y = top
-        self.cords = [[1, 0, 0],
-                      [1, 1, 1]]
+        self.cords = np.array([[1, 0, 0],
+                               [1, 1, 1]], np.int8)
         self.fill_rects(self.rects)
 
 
@@ -83,6 +84,6 @@ class ZBlock(Block):
         self.rect = self.image.get_rect()
         self.rect.x = left + cell_size * 4
         self.rect.y = top
-        self.cords = [[1, 1, 0],
-                      [0, 1, 1]]
+        self.cords = np.array([[1, 1, 0],
+                               [0, 1, 1]], dtype=np.int8)
         self.fill_rects(self.rects)

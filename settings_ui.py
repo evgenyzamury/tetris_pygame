@@ -12,7 +12,6 @@ class SettingsUI:
         music_volume, block_volume, difficulty, language, theme = get_player_settings()
         self.width = WIDTH
         self.height = HEIGHT
-        self.current_language = "en"
         self.font = pygame.font.SysFont(None, 30)
 
         self.theme_colors = {
@@ -55,10 +54,10 @@ class SettingsUI:
     def render(self, screen):
         screen.fill(self.bg_color)
 
-        title = self.font.render(get_translation("Settings", self.current_language), True, self.text_color)
+        title = self.font.render(get_translation("Settings", self.options["language"]), True, self.text_color)
         screen.blit(title, (self.width // 2 - title.get_width() // 2, 20))
 
-        music_label = self.font.render(get_translation("Music Volume", self.current_language), True, self.text_color)
+        music_label = self.font.render(get_translation("Music Volume", self.options["language"]), True, self.text_color)
         screen.blit(music_label, (50, 90))
         pygame.draw.rect(screen, self.text_color, self.music_slider_rect, 2)
         volume_indicator = pygame.Rect(
@@ -66,7 +65,7 @@ class SettingsUI:
             self.music_slider_rect.y - 5, 10, 20)
         pygame.draw.rect(screen, self.text_color, volume_indicator)
 
-        block_label = self.font.render(get_translation("Block Volume", self.current_language), True, self.text_color)
+        block_label = self.font.render(get_translation("Block Volume", self.options["language"]), True, self.text_color)
         screen.blit(block_label, (50, 190))
         pygame.draw.rect(screen, self.text_color, self.block_slider_rect, 2)
         block_indicator = pygame.Rect(
@@ -74,7 +73,8 @@ class SettingsUI:
             self.block_slider_rect.y - 5, 10, 20)
         pygame.draw.rect(screen, self.text_color, block_indicator)
 
-        difficulty_label = self.font.render(get_translation("Difficulty", self.current_language), True, self.text_color)
+        difficulty_label = self.font.render(get_translation("Difficulty", self.options["language"]), True,
+                                            self.text_color)
         screen.blit(difficulty_label, (50, 290))
         for button in self.difficulty_buttons:
             pygame.draw.rect(screen, self.text_color, button["rect"], 2)
@@ -82,7 +82,7 @@ class SettingsUI:
             screen.blit(text, (button["rect"].x + (button["rect"].width - text.get_width()) // 2,
                                button["rect"].y + (button["rect"].height - text.get_height()) // 2))
 
-        language_label = self.font.render(get_translation("Language", self.current_language), True, self.text_color)
+        language_label = self.font.render(get_translation("Language", self.options["language"]), True, self.text_color)
         screen.blit(language_label, (50, 390))
         for button in self.language_buttons:
             pygame.draw.rect(screen, self.text_color, button["rect"], 2)
@@ -90,7 +90,7 @@ class SettingsUI:
             screen.blit(text, (button["rect"].x + (button["rect"].width - text.get_width()) // 2,
                                button["rect"].y + (button["rect"].height - text.get_height()) // 2))
 
-        theme_label = self.font.render(get_translation("Theme", self.current_language), True, self.text_color)
+        theme_label = self.font.render(get_translation("Theme", self.options["language"]), True, self.text_color)
         screen.blit(theme_label, (50, 490))
         for button in self.theme_buttons:
             pygame.draw.rect(screen, self.text_color, button["rect"], 2)
@@ -99,9 +99,18 @@ class SettingsUI:
                                button["rect"].y + (button["rect"].height - text.get_height()) // 2))
 
         pygame.draw.rect(screen, self.text_color, self.back_button_rect, 2)
-        back_text = self.font.render(get_translation("Back", self.current_language), True, self.text_color)
+        back_text = self.font.render(get_translation("Back", self.options["language"]), True, self.text_color)
         screen.blit(back_text, (self.back_button_rect.x + (self.back_button_rect.width - back_text.get_width()) // 2,
                                 self.back_button_rect.y + (self.back_button_rect.height - back_text.get_height()) // 2))
+
+    def change_speed_block(self):
+        # Установка скорости в зависимости от сложности
+        if self.options['difficulty'] == 0:
+            self.options['block_speed'] = 1
+        elif self.options['difficulty'] == 1:
+            self.options['block_speed'] = 3
+        elif self.options['difficulty'] == 2:
+            self.options['block_speed'] = 10
 
     def handle_event(self, event):
         # создадим переменную в которую будем записывать сигнал, если пользователь что-то поменяет
@@ -127,23 +136,18 @@ class SettingsUI:
             for button in self.difficulty_buttons:
                 if button["rect"].collidepoint(event.pos):  # Если пользователь кликнул по кнопке
                     selected_difficulty = button["text"]
-                    self.options["difficulty"] = selected_difficulty  # Обновляем выбранную сложность
+                    # Обновляем выбранную сложность
+                    self.options["difficulty"] = difficulty_list.index(selected_difficulty)
 
                     # Установка скорости в зависимости от сложности
-                    if selected_difficulty == 'Easy':
-                        self.options['block_speed'] = 1
-                    elif selected_difficulty == 'Medium':
-                        self.options['block_speed'] = 3
-                    elif selected_difficulty == 'Impossible':
-                        self.options['block_speed'] = 10
+                    self.change_speed_block()
 
                     signal = 'difficulty'
 
             # ловим сигнал смены языка
             for button in self.language_buttons:
                 if button["rect"].collidepoint(event.pos):
-                    self.options["language"] = button["text"]
-                    self.current_language = "en" if button["text"] == "English" else "ru"
+                    self.options["language"] = "en" if button['text'] == 'English' else 'ru'
                     signal = 'language'
 
             # ловим темы

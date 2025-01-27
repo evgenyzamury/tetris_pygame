@@ -17,15 +17,6 @@ FPS = 1650
 
 BLOCKS = [ZBlock, SBlock, IBlock, LBlock, TBlock, JBlock, OBlock]
 
-story_line = []
-index_story = -1
-
-score = 0
-level = 1
-
-is_paused = False
-result_show = False
-
 
 def gameplay(flag_shake_y):
     dx = dy = 0
@@ -177,7 +168,9 @@ if __name__ == '__main__':
 
     screen = pygame.display.set_mode(SIZE)
     pygame.display.set_caption('tetris')
-    settings_ui = SettingsUI()
+    settings_ui = SettingsUI()  # инициализируем настройки
+    settings_ui.options['difficulty'] = difficulty  # загружаем сложность
+    settings_ui.change_speed_block()
 
     all_group = pygame.sprite.Group()
     particles_group = pygame.sprite.Group()  # группа для частиц после поломки блоков
@@ -189,7 +182,11 @@ if __name__ == '__main__':
     tetris_game_running = False
     start_menu = True
     show_statistic = False
+    is_paused = False
+    result_show = False
     flag_shake_y = 0
+    score = 0
+    level = 1
 
     camera = Camera()
 
@@ -419,7 +416,7 @@ if __name__ == '__main__':
             screen.blit(score_text, (640, 70))
 
         elif defeat:
-            show_time(end_time - start_time)
+            show_time(end_time)
             font = pygame.font.SysFont(None, 30)
             score_text = font.render(f"Score: {score}", True, (255, 255, 255) if theme else (0, 0, 0))
             screen.blit(score_text, (640, 70))

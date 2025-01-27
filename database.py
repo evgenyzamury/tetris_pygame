@@ -6,26 +6,30 @@ database_path = 'data/tetris.db'
 def get_statistic():  # получаем статистику активного игрока из базы данных
     con = sqlite3.connect(database_path)
     cur = con.cursor()
-    query = """SELECT * FROM stats INNER JOIN players on players.id = stats.player_id
+    query = """SELECT best_score, all_score, play_time FROM stats INNER JOIN players on players.id = stats.player_id
                     WHERE player = (SELECT player FROM players WHERE active_player = 1)"""
     result = cur.execute(query).fetchone()
     # player_id, best_score all_score play_time
     con.close()
-    best_score = result[1]
-    all_score = result[2]
-    play_time = result[3] // 60
+    print(result)
+    best_score = result[0]
+    all_score = result[1]
+    play_time = result[2] // 60
     return best_score, all_score, play_time
 
 
 def save_result_in_db(score, time):  # обновляем и сохраняем статистику игрока
     con = sqlite3.connect(database_path)
     cur = con.cursor()
-    query = """SELECT * FROM stats INNER JOIN players on players.id = stats.player_id
+    query = """SELECT best_score, all_score, play_time FROM stats INNER JOIN players on players.id = stats.player_id
                     WHERE player = (SELECT player FROM players WHERE active_player = 1)"""
     result = cur.execute(query).fetchone()
-    best_score = result[1]
-    all_score = result[2] + score
-    all_time = result[3] + time
+    best_score = result[0]
+    all_score = result[1] + score
+    print(result[2])
+    print(time)
+    all_time = result[2] + time
+    print(all_time)
     if score > best_score:
         best_score = score
     query = """UPDATE

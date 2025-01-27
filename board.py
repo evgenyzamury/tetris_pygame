@@ -114,7 +114,6 @@ class Board(pygame.sprite.Sprite):
     def clear_destroy(self, particles_group):
         for y in range(self.height):
             for x in range(self.width):
-                print(x, y)
                 if self.board[y][x]:
                     self.broken_block(x, y, particles_group)
                     self.board[y][x] = 0

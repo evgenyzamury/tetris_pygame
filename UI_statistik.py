@@ -14,7 +14,7 @@ def ui_show_statistic(screen):
 
     # Получаем статистику из базы данных
     best_score, all_score, play_time = get_statistic()
-
+    print(play_time, '-playtime statistic')
     # Устанавливаем шрифт
     font = pygame.font.SysFont(None, 40)
 
