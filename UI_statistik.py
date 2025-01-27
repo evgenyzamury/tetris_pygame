@@ -54,7 +54,11 @@ def ui_show_statistic(screen):
             if event.type == pygame.MOUSEMOTION:
                 back_button.check_hover(event.pos)
 
-            if event.type == pygame.MOUSEBUTTONDOWN and back_button.rect.collidepoint(event.pos):
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if back_button.rect.collidepoint(event.pos):
+                    menu_ui.render(screen)
+                    running = False
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 menu_ui.render(screen)
                 running = False
 
