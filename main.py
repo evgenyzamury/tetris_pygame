@@ -212,7 +212,7 @@ if __name__ == '__main__':
     # создадим кнопку паузу по теме
     pause_button, continue_button, back_to_menu_button, restart_button = button_set(theme)
 
-    menu_ui = MenuUI(WIDTH, HEIGHT, theme)
+    menu_ui = MenuUI(WIDTH, HEIGHT, theme, language='en')
 
     # музыка на фон
     play_music = pygame.mixer.Sound('data/sounds/base_music_fon.mp3')
@@ -302,7 +302,8 @@ if __name__ == '__main__':
                             for settings_event in pygame.event.get():
 
                                 # передаём event в обработку в настройки
-                                settings_action = settings_ui.handle_event(settings_event, speed)
+                                settings_action = settings_ui.handle_event(settings_event)
+                                menu_ui.render(screen)
 
                                 if settings_event.type == pygame.QUIT:
                                     running = False

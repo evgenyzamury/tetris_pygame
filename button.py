@@ -1,9 +1,12 @@
 import pygame
 
+from translation import get_translation
+
 
 class Button:
     def __init__(self, x, y, width, height, text, color, hover_color=None,
-                 bg_color=(0, 0, 0), text_size=20, theme=0):
+                 bg_color=(0, 0, 0), text_size=20, theme=0, language='en'):
+        self.language = language
         self.theme = theme
         self.rect = pygame.Rect(x, y, width, height)
         self.x, self.y = x, y
@@ -17,13 +20,14 @@ class Button:
         self.font = pygame.font.SysFont(None, self.text_size)
         self.sound = pygame.mixer.Sound('data/sounds/button.mp3')
         self.hover_color = pygame.Color(hover_color if hover_color else color)
+        self.set_language = get_translation(self.text, self.language)
         self.hover = False
 
     def draw(self, screen):
         # Если курсор на кнопке, рисуем её другим цветом
         color_to_draw = self.hover_color if self.hover else self.color
         pygame.draw.rect(screen, color_to_draw, self.rect)
-        text_surface = self.font.render(self.text, True, self.text_color)
+        text_surface = self.font.render(self.set_language, True, self.text_color)
         screen.blit(text_surface, (self.rect.x + (self.rect.width - text_surface.get_width()) // 2,
                                    self.rect.y + (self.rect.height - text_surface.get_height()) // 2))
         pygame.draw.rect(screen, self.text_color, self.rect, 1)

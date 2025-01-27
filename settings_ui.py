@@ -3,6 +3,8 @@ import pygame
 import blocks
 from variables import WIDTH, HEIGHT, difficulty_list, language_list, theme_list
 from database import get_player_settings, update_player_settings
+from ui_menu import MenuUI
+from translation import get_translation
 
 
 class SettingsUI:
@@ -10,6 +12,7 @@ class SettingsUI:
         music_volume, block_volume, difficulty, language, theme = get_player_settings()
         self.width = WIDTH
         self.height = HEIGHT
+        self.current_language = "en"
         self.font = pygame.font.SysFont(None, 30)
 
         self.theme_colors = {
@@ -52,10 +55,10 @@ class SettingsUI:
     def render(self, screen):
         screen.fill(self.bg_color)
 
-        title = self.font.render("Settings", True, self.text_color)
+        title = self.font.render(get_translation("Settings", self.current_language), True, self.text_color)
         screen.blit(title, (self.width // 2 - title.get_width() // 2, 20))
 
-        music_label = self.font.render("Music Volume", True, self.text_color)
+        music_label = self.font.render(get_translation("Music Volume", self.current_language), True, self.text_color)
         screen.blit(music_label, (50, 90))
         pygame.draw.rect(screen, self.text_color, self.music_slider_rect, 2)
         volume_indicator = pygame.Rect(
@@ -63,7 +66,7 @@ class SettingsUI:
             self.music_slider_rect.y - 5, 10, 20)
         pygame.draw.rect(screen, self.text_color, volume_indicator)
 
-        block_label = self.font.render("Block Volume", True, self.text_color)
+        block_label = self.font.render(get_translation("Block Volume", self.current_language), True, self.text_color)
         screen.blit(block_label, (50, 190))
         pygame.draw.rect(screen, self.text_color, self.block_slider_rect, 2)
         block_indicator = pygame.Rect(
@@ -71,7 +74,7 @@ class SettingsUI:
             self.block_slider_rect.y - 5, 10, 20)
         pygame.draw.rect(screen, self.text_color, block_indicator)
 
-        difficulty_label = self.font.render("Difficulty", True, self.text_color)
+        difficulty_label = self.font.render(get_translation("Difficulty", self.current_language), True, self.text_color)
         screen.blit(difficulty_label, (50, 290))
         for button in self.difficulty_buttons:
             pygame.draw.rect(screen, self.text_color, button["rect"], 2)
@@ -79,7 +82,7 @@ class SettingsUI:
             screen.blit(text, (button["rect"].x + (button["rect"].width - text.get_width()) // 2,
                                button["rect"].y + (button["rect"].height - text.get_height()) // 2))
 
-        language_label = self.font.render("Language", True, self.text_color)
+        language_label = self.font.render(get_translation("Language", self.current_language), True, self.text_color)
         screen.blit(language_label, (50, 390))
         for button in self.language_buttons:
             pygame.draw.rect(screen, self.text_color, button["rect"], 2)
@@ -87,7 +90,7 @@ class SettingsUI:
             screen.blit(text, (button["rect"].x + (button["rect"].width - text.get_width()) // 2,
                                button["rect"].y + (button["rect"].height - text.get_height()) // 2))
 
-        theme_label = self.font.render("Theme", True, self.text_color)
+        theme_label = self.font.render(get_translation("Theme", self.current_language), True, self.text_color)
         screen.blit(theme_label, (50, 490))
         for button in self.theme_buttons:
             pygame.draw.rect(screen, self.text_color, button["rect"], 2)
@@ -96,11 +99,11 @@ class SettingsUI:
                                button["rect"].y + (button["rect"].height - text.get_height()) // 2))
 
         pygame.draw.rect(screen, self.text_color, self.back_button_rect, 2)
-        back_text = self.font.render("Back", True, self.text_color)
+        back_text = self.font.render(get_translation("Back", self.current_language), True, self.text_color)
         screen.blit(back_text, (self.back_button_rect.x + (self.back_button_rect.width - back_text.get_width()) // 2,
                                 self.back_button_rect.y + (self.back_button_rect.height - back_text.get_height()) // 2))
 
-    def handle_event(self, event, speed):
+    def handle_event(self, event):
         # создадим переменную в которую будем записывать сигнал, если пользователь что-то поменяет
         signal = None
 
@@ -140,6 +143,8 @@ class SettingsUI:
             for button in self.language_buttons:
                 if button["rect"].collidepoint(event.pos):
                     self.options["language"] = button["text"]
+                    self.current_language = "en" if button["text"] == "English" else "ru"
+                    signal = 'language'
 
             # ловим темы
             for button in self.theme_buttons:
