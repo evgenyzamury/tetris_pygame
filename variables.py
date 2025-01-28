@@ -16,3 +16,58 @@ SHADOW_COLOR = '#00DF00'
 difficulty_list = ["Easy", "Medium", "Impossible"]
 language_list = ["English", "Русский"]
 theme_list = ["Light", "Dark"]
+
+translations = {
+    "en": {
+        "Settings": "Settings",
+        "Music Volume": "Music Volume",
+        "Block Volume": "Block Volume",
+        "Difficulty": "Difficulty",
+        "Language": "Language",
+        "Theme": "Theme",
+        "Back": "Back",
+        "Easy": "Easy",
+        "Medium": "Medium",
+        "Impossible": "Impossible",
+        "Pause": "Pause",
+        "Continue": "Continue",
+        "Quit": "Quit",
+        "Results": "Results",
+        "Save and Exit": "Save and Exit",
+        "YOU LOSE!": "YOU LOSE!",
+        "Score": "Score",
+        "Next": "Next",
+        "Time": "Time",
+        "Back to menu": "Back to menu",
+        "Restart": "Restart",
+        "PAUSED": "PAUSED",
+    },
+    "ru": {
+        "Settings": "Настройки",
+        "Music Volume": "Музыка",
+        "Block Volume": "Блоки",
+        "Difficulty": "Сложность",
+        "Language": "Язык",
+        "Theme": "Тема",
+        "Back": "Назад",
+        "Easy": "Легко",
+        "Medium": "Средне",
+        "Impossible": "Невозможно",
+        "Pause": "Пауза",
+        "Continue": "Продолжить",
+        "Quit": "Выход",
+        "Results": "Результаты",
+        "Save and Exit": "Сохранить и выйти",
+        "YOU LOSE!": "ВЫ ПРОИГРАЛИ!",
+        "Score": "Очки",
+        "Next": "Следующий",
+        "Time": "Время",
+        "Back to menu": "Выйти в меню",
+        "Restart": "Перезапуск",
+        "PAUSED": "ПАУЗА",
+    },
+}
+
+
+def get_translation(key, language="en"):
+    return translations.get(language, {}).get(key, key)

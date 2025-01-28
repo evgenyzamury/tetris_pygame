@@ -11,6 +11,7 @@ from ui_menu import MenuUI
 from settings_ui import SettingsUI
 from UI_statistik import ui_show_statistic
 from database import *
+from variables import translations
 
 SIZE = WIDTH, HEIGHT = 800, 900
 FPS = 1650
@@ -108,14 +109,12 @@ def spawn_new_block(flag_shake_y, block=None, spawn_block_list=None):
 def show_next_block():  # показывает следующий блок который заспавнится
     # левый верхний угол где показывается блок
     x, y = 670, 250
+    if language == 'ru':  # если ру будет СЛЕДУЮЩИЙ длинное слово, надо поставить его левее
+        x -= 30
     font = pygame.font.SysFont(None, 30)
     # рисуем надпись по теме
-    if theme:
-        img_text = font.render('Next: ', 1, (255, 255, 255))
-        screen.blit(img_text, (x, y))
-    else:
-        img_text = font.render('Next: ', 1, (0, 0, 0))
-        screen.blit(img_text, (x, y))
+    img_text = font.render(f'{translations[language]['Next']}: ', 1, (255, 255, 255) if theme else (0, 0, 0))
+    screen.blit(img_text, (x, y))
 
     # выбираем 2 блок из списка тк это индексы будущего блока
     block_index = spawn_block_list[1][0]
@@ -132,24 +131,26 @@ def show_time(ticks):
     time = (ticks - start_time) // 1000
     time = f'{time // 60:02d}:' + f'{time % 60:02d}'
     img_time = font.render(time, 1, (255, 255, 255) if theme else (0, 0, 0))
-    img_time_text = font.render('Time', 1, (255, 255, 255) if theme else (0, 0, 0))
+    img_time_text = font.render(translations[language]['Time'], 1, (255, 255, 255) if theme else (0, 0, 0))
 
     screen.blit(img_time_text, (660, 140))
     screen.blit(img_time, (670 + img_time_text.get_width(), 140))
 
 
-def button_set(theme):
-    pause_button = Button(WIDTH - 770, 20, 80, 40, 'Pause', ((0, 0, 0) if theme else (255, 255, 255)),
+def button_set():
+    pause_button = Button(WIDTH - 770, 20, 80, 40, translations[language]['Pause'],
+                          ((0, 0, 0) if theme else (255, 255, 255)),
                           hover_color='gray', text_size=30, theme=theme)
 
-    continue_button = Button((WIDTH - 200) // 2, HEIGHT // 2 - 50 - 10, 200, 60, 'continue',
+    continue_button = Button((WIDTH - 200) // 2, HEIGHT // 2 - 50 - 10, 200, 60, translations[language]['Continue'],
                              ((0, 0, 0) if theme else (255, 255, 255)), hover_color='gray', text_size=30, theme=theme)
 
-    back_to_menu_button = Button((WIDTH - 200) // 2, HEIGHT // 2 + 50 + 10, 200, 60, 'back to menu',
+    back_to_menu_button = Button((WIDTH - 200) // 2, HEIGHT // 2 + 50 + 10, 200, 60,
+                                 translations[language]['Back to menu'],
                                  ((0, 0, 0) if theme else (255, 255, 255)), hover_color='gray', text_size=30,
                                  theme=theme)
 
-    restart_button = Button((WIDTH - 200) // 2, HEIGHT // 2 + 100 + 30, 200, 60, 'restart',
+    restart_button = Button((WIDTH - 200) // 2, HEIGHT // 2 + 100 + 30, 200, 60, translations[language]['Restart'],
                             ((0, 0, 0) if theme else (255, 255, 255)), hover_color='gray', text_size=30, theme=theme)
 
     return pause_button, continue_button, back_to_menu_button, restart_button
@@ -203,13 +204,10 @@ if __name__ == '__main__':
 
     pos = 0, 0
 
-    music_volume, block_volume, difficulty, language, theme = get_player_settings()
-    music_volume = music_volume / 100
-
     # создадим кнопку паузу по теме
-    pause_button, continue_button, back_to_menu_button, restart_button = button_set(theme)
+    pause_button, continue_button, back_to_menu_button, restart_button = button_set()
 
-    menu_ui = MenuUI(WIDTH, HEIGHT, theme, language='en')
+    menu_ui = MenuUI(WIDTH, HEIGHT, theme, language=language)
 
     # музыка на фон
     play_music = pygame.mixer.Sound('data/sounds/base_music_fon.mp3')
@@ -277,7 +275,7 @@ if __name__ == '__main__':
                 if start_menu:
                     action = menu_ui.get_button_action(event)  # ловим действие происходящее в меню
 
-                    if action == 'Continue' and start_menu:  # нажата клавиша continue
+                    if action == menu_ui.continue_button and start_menu:  # нажата клавиша continue
                         # список индексов блоков которые будут появляться
                         spawn_block_list = [(random.randint(0, 6), random.randint(0, 6)),
                                             (random.randint(0, 6), random.randint(0, 6))]
@@ -288,7 +286,7 @@ if __name__ == '__main__':
                         start_menu = False
                         tetris_game_running = True
 
-                    elif action == 'Settings':  # нажата клавиша settings
+                    elif action == menu_ui.settings_button:  # нажата клавиша settings
                         settings_open = True
 
                         # Открытые настройки в главном меню
@@ -324,22 +322,23 @@ if __name__ == '__main__':
                                 # смена цветовой темы приложения
                                 elif settings_action == "theme":
                                     menu_ui.change_theme()
-                                    theme = int(not theme)
-                                    pause_button, continue_button, back_to_menu_button, restart_button = button_set(
-                                        theme)
+                                    theme = int(not theme)  # так как 2 темы, меняем её на противоположную
+                                    pause_button, continue_button, back_to_menu_button, restart_button = button_set()
 
-                                # последняя сточка настроек
+                                # меняем язык
+                                elif settings_action == 'language':
+                                    # передаём язык в меню
+                                    language = settings_ui.options['language']
+                                    menu_ui.change_language(language)
+                                    pause_button, continue_button, back_to_menu_button, restart_button = button_set()
+                            # последняя сточка настроек
 
                     # нажали на кнопку Results
-                    elif action == 'Results':
+                    elif action == menu_ui.results_button:
                         show_statistic = True
 
-                    # нажали на кнопку Quit
-                    elif action == 'Quit' and start_menu:
-                        running = False
-
                     # нажали на кнопку Exit
-                    elif action == "Save and Exit":
+                    elif action == menu_ui.save_exit_button:
                         running = False
 
         # Логика паузы
@@ -372,9 +371,10 @@ if __name__ == '__main__':
                 block.draw(screen)  # рисуем активный блок
 
                 # надпись PAUSED
-                img_font = font.render('PAUSED', 1, ((255, 255, 255) if theme else (0, 0, 0)))
+                img_font = font.render(translations[language]['PAUSED'], 1, ((255, 255, 255) if theme else (0, 0, 0)))
                 # надпись кол-во очков
-                score_text = font_score.render(f"Score: {score}", True, ((255, 255, 255) if theme else (0, 0, 0)))
+                score_text = font_score.render(f"{translations[language]['Score']}: {score}", True,
+                                               ((255, 255, 255) if theme else (0, 0, 0)))
 
                 # выводим надписи на экран
                 screen.blit(score_text, (620, 70))
@@ -412,17 +412,19 @@ if __name__ == '__main__':
 
             # рисуем очки
             font = pygame.font.SysFont(None, 30)
-            score_text = font.render(f"Score: {score}", True, (255, 255, 255) if theme else (0, 0, 0))
+            score_text = font.render(f"{translations[language]['Score']}: {score}", True,
+                                     (255, 255, 255) if theme else (0, 0, 0))
             screen.blit(score_text, (640, 70))
 
         elif defeat:
             show_time(end_time)
             font = pygame.font.SysFont(None, 30)
-            score_text = font.render(f"Score: {score}", True, (255, 255, 255) if theme else (0, 0, 0))
+            score_text = font.render(f"{translations[language]['Score']}: {score}", True,
+                                     (255, 255, 255) if theme else (0, 0, 0))
             screen.blit(score_text, (640, 70))
             board.render(screen)
             font = pygame.font.SysFont(None, 100)
-            img = font.render("YOU LOSE !", 1, (255, 255, 255) if theme else (0, 0, 0))
+            img = font.render(translations[language]["YOU LOSE !"], 1, (255, 255, 255) if theme else (0, 0, 0))
             screen.blit(img, (WIDTH // 2 - img.get_width() // 2, HEIGHT // 2 - img.get_height()))
             restart_button.check_hover(pos)
             restart_button.draw(screen)

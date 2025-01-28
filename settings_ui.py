@@ -1,10 +1,9 @@
 import pygame
 
 import blocks
-from variables import WIDTH, HEIGHT, difficulty_list, language_list, theme_list
+from variables import WIDTH, HEIGHT, difficulty_list, language_list, theme_list, get_translation
 from database import get_player_settings, update_player_settings
 from ui_menu import MenuUI
-from translation import get_translation
 
 
 class SettingsUI:

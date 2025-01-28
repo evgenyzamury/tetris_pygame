@@ -1,6 +1,6 @@
 import pygame
 
-from translation import get_translation
+from variables import get_translation
 
 
 class Button:
