@@ -124,7 +124,9 @@ class Block(pygame.sprite.Sprite):
         for rect in shadow_rects:
             rect.y -= 40
         for rect in shadow_rects:
+            x, y = rect.x, rect.y
             pygame.draw.rect(screen, SHADOW_COLOR, rect, 3)
+            pygame.draw.rect(screen, SHADOW_COLOR, (x + 10, y + 10, 20, 20), 2)
 
     def fill_rects(self, rects):  # обновляет (self.rects)
         rects.clear()

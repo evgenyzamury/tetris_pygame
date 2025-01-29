@@ -158,6 +158,8 @@ def button_set():
 
 if __name__ == '__main__':
     pygame.init()
+    pygame_icon = pygame.image.load('data/tetris_logo.png')
+    pygame.display.set_icon(pygame_icon)
     screen = pygame.display.set_mode(SIZE)
     screen.fill((255, 255, 255))
     pygame.display.flip()
