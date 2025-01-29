@@ -1,4 +1,4 @@
-SIZE = WIDTH, HEIGHT = 800, 900
+SIZE = WIDTH, HEIGHT = 800, 850
 
 # Цвета для блоков
 COLOR = [['#c34046', '#b33a41', '#69262a', '#d1686e'],  # red

@@ -158,6 +158,9 @@ def button_set():
 
 if __name__ == '__main__':
     pygame.init()
+    screen = pygame.display.set_mode(SIZE)
+    screen.fill((255, 255, 255))
+    pygame.display.flip()
     # проверяем на наличие базы данных, если нету создаём пустую
     if not os.path.isfile(database_path):
         if not os.path.isdir('data'):
@@ -168,7 +171,6 @@ if __name__ == '__main__':
     music_volume = music_volume / 100
     sfx_volume = sfx_volume / 100
 
-    screen = pygame.display.set_mode(SIZE)
     pygame.display.set_caption('tetris')
     settings_ui = SettingsUI()  # инициализируем настройки
     settings_ui.options['difficulty'] = difficulty  # загружаем сложность
@@ -407,7 +409,7 @@ if __name__ == '__main__':
         # ЛОГИКА ОТОБРАЖЕНИЕ ЭКРАНОВ
         if start_menu:
             if show_statistic:
-                ui_show_statistic(screen)
+                ui_show_statistic(screen, theme)
                 show_statistic = False
             else:
                 screen.fill(settings_ui.bg_color)
