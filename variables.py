@@ -42,6 +42,9 @@ translations = {
         "Restart": "Restart",
         "PAUSED": "PAUSED",
         "NEW RECORD": "NEW RECORD",
+        "Best score": "Best score",
+        "All score": "All score",
+        "Play time (min)": "Play time (min)",
     },
     "ru": {
         "Settings": "Настройки",
@@ -67,6 +70,9 @@ translations = {
         "Restart": "Перезапуск",
         "PAUSED": "ПАУЗА",
         "NEW RECORD": "НОВЫЙ РЕКОРД",
+        "Best score": "Лучший результат",
+        "All score": "Все очки",
+        "Play time (min)": "Игровое время(м)",
     },
 }
 

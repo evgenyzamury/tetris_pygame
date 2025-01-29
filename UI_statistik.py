@@ -2,14 +2,15 @@ import sys
 
 import pygame
 
-from variables import HEIGHT, WIDTH
+from variables import HEIGHT, WIDTH, translations
 from database import get_statistic
 from button import Button
 from ui_menu import MenuUI
 
 
-def ui_show_statistic(screen, theme):
+def ui_show_statistic(screen, theme, language):
     color = (255, 255, 255) if theme else (0, 0, 0)
+    color_button = (0, 0, 0) if theme else (255, 255, 255)
     menu_ui = MenuUI(WIDTH, HEIGHT, theme=0)
     running = True
     # Получаем статистику из базы данных
@@ -18,11 +19,11 @@ def ui_show_statistic(screen, theme):
     font = pygame.font.SysFont(None, 40)
 
     # Рендерим текст статистики
-    img_best_score = font.render('Best score', 1, color)
+    img_best_score = font.render(translations[language]['Best score'], 1, color)
     img_best_score_amount = font.render(str(best_score), 1, color)
-    img_all_score = font.render('All score', 1, color)
+    img_all_score = font.render(translations[language]['All score'], 1, color)
     img_all_score_amount = font.render(str(all_score), 1, color)
-    img_play_time = font.render('Play time (min)', 1, color)
+    img_play_time = font.render(translations[language]['Play time (min)'], 1, color)
     img_play_time_amount = font.render(str(play_time), 1, color)
 
     # Отрисовка статистики
@@ -53,8 +54,8 @@ def ui_show_statistic(screen, theme):
                 (WIDTH - 40 - img_play_time.get_width() // 2, y2))
 
     # Создаем кнопку "Назад"
-    back_button = Button(10, 10, 100, 40, 'Back', (255, 255, 255),
-                         hover_color='gray', text_size=30, theme=0)
+    back_button = Button(10, 10, 100, 40, translations[language]['Back'], color_button,
+                         hover_color='gray', text_size=30, theme=theme)
 
     back_button.draw(screen)
 

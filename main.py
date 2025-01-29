@@ -409,7 +409,7 @@ if __name__ == '__main__':
         # ЛОГИКА ОТОБРАЖЕНИЕ ЭКРАНОВ
         if start_menu:
             if show_statistic:
-                ui_show_statistic(screen, theme)
+                ui_show_statistic(screen, theme, language)
                 show_statistic = False
             else:
                 screen.fill(settings_ui.bg_color)
