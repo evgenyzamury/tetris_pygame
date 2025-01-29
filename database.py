@@ -19,6 +19,7 @@ def get_statistic():  # получаем статистику активного
 
 
 def save_result_in_db(score, time):  # обновляем и сохраняем статистику игрока
+    new_record = False  # Переменная для проверки нового рекорда
     con = sqlite3.connect(database_path)
     cur = con.cursor()
     query = """SELECT best_score, all_score, play_time FROM stats INNER JOIN players on players.id = stats.player_id
@@ -31,6 +32,7 @@ def save_result_in_db(score, time):  # обновляем и сохраняем 
     all_time = result[2] + time
     print(all_time)
     if score > best_score:
+        new_record = True
         best_score = score
     query = """UPDATE
             stats
@@ -43,6 +45,7 @@ def save_result_in_db(score, time):  # обновляем и сохраняем 
     con.commit()
     con.close()
     print('данные в бд сохранены', best_score, all_score, all_time)
+    return new_record
 
 
 def get_player_settings():
@@ -93,12 +96,12 @@ def create_table():
     music_volume INTEGER,
     block_volume INTEGER,
     difficulty   INTEGER,
-    language     INTEGER,
+    language     TEXT,
     theme        INTEGER
     );
     """
     cur.execute(query)
-    query = """INSERT INTO settings VALUES(1, 50, 50, 0, 0, 0);"""
+    query = """INSERT INTO settings VALUES(1, 50, 50, 0, 'en', 0);"""
     cur.execute(query)
     con.commit()
     con.close()

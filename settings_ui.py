@@ -20,7 +20,7 @@ class SettingsUI:
 
         self.options = {
             "music_volume": music_volume,
-            "block_volume": block_volume,
+            "sfx_volume": block_volume,
             "difficulty": difficulty,
             "language": language,
             "theme": theme,
@@ -64,11 +64,11 @@ class SettingsUI:
             self.music_slider_rect.y - 5, 10, 20)
         pygame.draw.rect(screen, self.text_color, volume_indicator)
 
-        block_label = self.font.render(get_translation("Block Volume", self.options["language"]), True, self.text_color)
+        block_label = self.font.render(get_translation("SFX Volume", self.options["language"]), True, self.text_color)
         screen.blit(block_label, (50, 190))
         pygame.draw.rect(screen, self.text_color, self.block_slider_rect, 2)
         block_indicator = pygame.Rect(
-            self.block_slider_rect.x + (self.block_slider_rect.width * self.options["block_volume"] // 100) - 5,
+            self.block_slider_rect.x + (self.block_slider_rect.width * self.options["sfx_volume"] // 100) - 5,
             self.block_slider_rect.y - 5, 10, 20)
         pygame.draw.rect(screen, self.text_color, block_indicator)
 
@@ -126,6 +126,7 @@ class SettingsUI:
             elif self.block_slider_rect.collidepoint(event.pos):
                 self.options["block_volume"] = max(0, min(100, (
                         event.pos[0] - self.block_slider_rect.x) * 100 // self.block_slider_rect.width))
+                signal = 'sfx volume'
 
             # сигнал кнопки назад
             elif self.back_button_rect.collidepoint(event.pos):
@@ -160,7 +161,7 @@ class SettingsUI:
 
         if signal:
             # обновляем базу данных
-            update_player_settings(self.options["music_volume"], self.options["block_volume"],
+            update_player_settings(self.options["music_volume"], self.options["sfx_volume"],
                                    self.options["difficulty"],
                                    self.options["language"], self.options["theme"])
 

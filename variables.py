@@ -21,7 +21,7 @@ translations = {
     "en": {
         "Settings": "Settings",
         "Music Volume": "Music Volume",
-        "Block Volume": "Block Volume",
+        "SFX Volume": "SFX Volume",
         "Difficulty": "Difficulty",
         "Language": "Language",
         "Theme": "Theme",
@@ -41,11 +41,12 @@ translations = {
         "Back to menu": "Back to menu",
         "Restart": "Restart",
         "PAUSED": "PAUSED",
+        "NEW RECORD": "NEW RECORD",
     },
     "ru": {
         "Settings": "Настройки",
         "Music Volume": "Музыка",
-        "Block Volume": "Блоки",
+        "SFX Volume": "SFX Звуки",
         "Difficulty": "Сложность",
         "Language": "Язык",
         "Theme": "Тема",
@@ -65,6 +66,7 @@ translations = {
         "Back to menu": "Выйти в меню",
         "Restart": "Перезапуск",
         "PAUSED": "ПАУЗА",
+        "NEW RECORD": "НОВЫЙ РЕКОРД",
     },
 }
 

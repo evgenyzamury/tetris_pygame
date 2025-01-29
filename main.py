@@ -102,7 +102,7 @@ def spawn_new_block(flag_shake_y, block=None, spawn_block_list=None):
             return False, spawn_block_list, flag_shake_y
     block_index = spawn_block_list[0][0]  # определяем какой блок заспавниться
     color_index = spawn_block_list[0][1]  # определяем цвет блока
-    block = BLOCKS[block_index](all_group, board.rect.x, board.rect.y, cell_size, speed, color_index)
+    block = BLOCKS[block_index](all_group, board.rect.x, board.rect.y, cell_size, speed, color_index, sfx_volume)
     return block, spawn_block_list, flag_shake_y
 
 
@@ -121,7 +121,7 @@ def show_next_block():  # показывает следующий блок ко�
     color_index = spawn_block_list[1][1]
 
     # вызываем класс блока и рисуем его на экране
-    show_block = BLOCKS[block_index](all_group, x - 70, y + 50, 20, 0, color_index)
+    show_block = BLOCKS[block_index](all_group, x - 70, y + 50, 20, 0, color_index, sfx_volume)
     show_block.kill()  # убиваем его из группы он там не нужен
     show_block.draw(screen)
 
@@ -164,8 +164,9 @@ if __name__ == '__main__':
             os.mkdir('data')
         create_table()
 
-    music_volume, block_volume, difficulty, language, theme = get_player_settings()
+    music_volume, sfx_volume, difficulty, language, theme = get_player_settings()
     music_volume = music_volume / 100
+    sfx_volume = sfx_volume / 100
 
     screen = pygame.display.set_mode(SIZE)
     pygame.display.set_caption('tetris')
@@ -185,6 +186,7 @@ if __name__ == '__main__':
     show_statistic = False
     is_paused = False
     result_show = False
+    new_record = False
     flag_shake_y = 0
     score = 0
     level = 1
@@ -215,6 +217,9 @@ if __name__ == '__main__':
     play_music.set_volume(music_volume)
     # музыка в бесконечном цикле
     play_music.play(-1)
+
+    new_record_sound = pygame.mixer.Sound('data/sounds/new_record.mp3')
+    new_record_sound.set_volume(sfx_volume)
 
     while running:
         # показ фпс
@@ -315,6 +320,10 @@ if __name__ == '__main__':
                                 # если был изменен ползунок звука
                                 elif settings_action == "music volume":
                                     music_volume = settings_ui.options['music_volume'] / 100
+
+                                elif settings_action == "sfx volume":
+                                    sfx_volume = settings_ui.options["sfx_volume"] / 100
+                                    new_record_sound.set_volume(sfx_volume)
 
                                 elif settings_action == "difficulty":
                                     speed = settings_ui.options.get('block_speed')
@@ -417,15 +426,26 @@ if __name__ == '__main__':
             screen.blit(score_text, (640, 70))
 
         elif defeat:
-            show_time(end_time)
+            show_time(end_time)  # показываем сколько длилась игра
             font = pygame.font.SysFont(None, 30)
+            # показываем очки
             score_text = font.render(f"{translations[language]['Score']}: {score}", True,
                                      (255, 255, 255) if theme else (0, 0, 0))
             screen.blit(score_text, (640, 70))
             board.render(screen)
             font = pygame.font.SysFont(None, 100)
-            img = font.render(translations[language]["YOU LOSE !"], 1, (255, 255, 255) if theme else (0, 0, 0))
+            # показываем надпись поражения
+            img = font.render(translations[language]["YOU LOSE!"], 1, (255, 255, 255) if theme else (0, 0, 0))
             screen.blit(img, (WIDTH // 2 - img.get_width() // 2, HEIGHT // 2 - img.get_height()))
+
+            if new_record:
+                font = pygame.font.SysFont(None, 90)
+                img_new_record = font.render(translations[language]["NEW RECORD"], 1,
+                                             (255, 255, 255) if theme else (0, 0, 0))
+                screen.blit(img_new_record,
+                            (WIDTH // 2 - img_new_record.get_width() // 2, 10))
+
+            # показываем кнопки
             restart_button.check_hover(pos)
             restart_button.draw(screen)
             back_to_menu_button.check_hover(pos)
@@ -446,7 +466,9 @@ if __name__ == '__main__':
             else:
                 # Момент поражения в игре
                 end_time = pygame.time.get_ticks()
-                save_result_in_db(score, (end_time - start_time) // 1000)
+                new_record = save_result_in_db(score, (end_time - start_time) // 1000)
+                if new_record:
+                    new_record_sound.play()
                 defeat = True
                 tetris_game_running = False
 

@@ -8,7 +8,7 @@ from variables import COLOR, SHADOW_COLOR
 
 class Block(pygame.sprite.Sprite):
 
-    def __init__(self, all_group, cell_size, speed, color_index):
+    def __init__(self, all_group, cell_size, speed, color_index, sfx_volume):
         super().__init__(all_group)
         self.speed = speed
         self.tick = 0
@@ -29,6 +29,7 @@ class Block(pygame.sprite.Sprite):
         self.cell_size = cell_size
         self.sound_fall = pygame.mixer.Sound('data/sounds/fall_sound.mp3')
         self.sound_rotate = pygame.mixer.Sound('data/sounds/block_rotate.mp3')
+        self.sfx_volume = sfx_volume
 
     def __repr__(self):
         return f'Block({self.cell_size} {self.speed} {self.color_index})'
@@ -41,7 +42,7 @@ class Block(pygame.sprite.Sprite):
                 self.fill_rects(self.rects)
                 block_cords = [board.get_cell(rect.center) for rect in self.rects]
                 if not insta_fall:  # проверка что это не мгновенное падание звука (иначе звук накладывается)
-                    self.sound_fall.set_volume(0.3)
+                    self.sound_fall.set_volume(self.sfx_volume)
                     self.sound_fall.play()
                 if check_collide(board.board, block_cords):
                     self.rect.y -= 40
@@ -88,17 +89,18 @@ class Block(pygame.sprite.Sprite):
         self.speed = speed  # возвращаем скорость
 
     def rotation(self, board):  # поворачивает блок на 90 градусов
-        cords = numpy.array(self.cords)
-        rotate_matrix = numpy.rot90(cords)
-        self.cords = rotate_matrix
-        self.fill_rects(self.rects)
-        block_cords = [board.get_cell(rect.center) for rect in self.rects]
-        if check_collide(board.board, block_cords):
-            self.cords = cords
+        if not self.is_ground:
+            cords = numpy.array(self.cords)
+            rotate_matrix = numpy.rot90(cords)
+            self.cords = rotate_matrix
             self.fill_rects(self.rects)
-        else:
-            self.sound_fall.set_volume(0.3)
-            self.sound_fall.play()
+            block_cords = [board.get_cell(rect.center) for rect in self.rects]
+            if check_collide(board.board, block_cords):
+                self.cords = cords
+                self.fill_rects(self.rects)
+            else:
+                self.sound_fall.set_volume(self.sfx_volume)
+                self.sound_fall.play()
 
     def draw(self, screen):  # рисует блок
         for rect in self.rects:
