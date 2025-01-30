@@ -45,6 +45,8 @@ translations = {
         "Best score": "Best score",
         "All score": "All score",
         "Play time (min)": "Play time (min)",
+        "Log in": "Log in",
+        "Players in system": "Players in system",
     },
     "ru": {
         "Settings": "Настройки",
@@ -73,6 +75,8 @@ translations = {
         "Best score": "Лучший результат",
         "All score": "Все очки",
         "Play time (min)": "Игровое время(м)",
+        "Log in": "Войти",
+        "Players in system": "Игроки в системе"
     },
 }
 

@@ -7,8 +7,7 @@ from ui_menu import MenuUI
 
 
 class SettingsUI:
-    def __init__(self):
-        music_volume, block_volume, difficulty, language, theme = get_player_settings()
+    def __init__(self, music_volume, block_volume, difficulty, language, theme):
         self.width = WIDTH
         self.height = HEIGHT
         self.font = pygame.font.SysFont(None, 30)

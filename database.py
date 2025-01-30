@@ -58,8 +58,67 @@ def get_player_settings():
     return music_volume, block_volume, difficulty, language, theme
 
 
+def get_player_name():
+    con = sqlite3.connect(database_path)
+    cur = con.cursor()
+    query = "SELECT player FROM players WHERE active_player = 1"
+    player = cur.execute(query).fetchone()[0]
+    con.close()
+    return player
+
+
+def get_players_name():
+    con = sqlite3.connect(database_path)
+    cur = con.cursor()
+    query = "SELECT player FROM players"
+    players = cur.execute(query).fetchall()
+    con.close()
+    players = [player[0] for player in players]
+    return players
+
+
+def create_player(name):
+    con = sqlite3.connect(database_path)
+    cur = con.cursor()
+    query_active_settings = """SELECT 
+                                    music_volume, block_volume, difficulty, language, theme 
+                                FROM 
+                                    settings    
+                                WHERE player_id = (SELECT id FROM players WHERE active_player = 1)
+                                """
+    # узнаём активные настройки и применяем их к новому игроку
+    music_volume, block_volume, difficulty, language, theme = cur.execute(query_active_settings).fetchone()
+    query = "UPDATE players SET active_player = 0 WHERE id = (SELECT id FROM players WHERE active_player = 1)"
+    cur.execute(query)  # убираем активного игрока
+    query = "INSERT INTO players(player, active_player) VALUES (?, 1)"
+    cur.execute(query, (name,))  # создаём нового игрока
+
+    query = "SELECT id FROM players WHERE active_player = 1"
+    players_id = cur.execute(query).fetchone()[0]  # узнаём id у нового игрока
+
+    query = f"""INSERT INTO stats VALUES({players_id}, 0, 0, 0)"""  # статистика нового игрока
+    print(query)
+    cur.execute(query)
+
+    query = f"""INSERT INTO settings 
+    VALUES({players_id}, {music_volume}, {block_volume}, {difficulty}, '{language}', {theme});"""
+    cur.execute(query)  # настройки нового игрока
+    con.commit()
+    con.close()
+
+
+def change_player(name):
+    con = sqlite3.connect(database_path)
+    cur = con.cursor()
+    query = "UPDATE players SET active_player = 0 WHERE id = (SELECT id FROM players WHERE active_player = 1)"
+    cur.execute(query)  # убираем активного игрока
+    query = "UPDATE players SET active_player = 1 WHERE player = ?"
+    cur.execute(query, (name,))
+    con.commit()
+    con.close()
+
+
 def update_player_settings(music_volume, block_volume, difficulty, language, theme):
-    print(music_volume, block_volume, difficulty, language, theme)
     con = sqlite3.connect(database_path)
     cur = con.cursor()
     query = """UPDATE settings SET music_volume = ?, block_volume = ?, difficulty = ?, language = ?, theme = ?

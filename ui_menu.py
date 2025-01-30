@@ -65,11 +65,18 @@ class MenuUI:
                                        button_height, translations[self.language]['Save and Exit'],
                                        ((0, 0, 0) if self.theme else (255, 255, 255)),
                                        hover_color='gray', text_size=30, theme=self.theme)
+
+        self.log_in_button = Button(center_x, start_y + 4 * (button_height + spacing), button_width,
+                                    button_height, translations[self.language]['Log in'],
+                                    ((0, 0, 0) if self.theme else (255, 255, 255)),
+                                    hover_color='gray', text_size=30, theme=self.theme)
+
         self.buttons = [
             self.continue_button,
             self.settings_button,
             self.results_button,
-            self.save_exit_button
+            self.save_exit_button,
+            self.log_in_button,
         ]
 
     def change_theme(self):

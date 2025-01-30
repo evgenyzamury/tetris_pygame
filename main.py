@@ -10,6 +10,7 @@ from button import Button
 from ui_menu import MenuUI
 from settings_ui import SettingsUI
 from UI_statistik import ui_show_statistic
+from log_in import show_log_in
 from database import *
 from variables import translations
 
@@ -174,7 +175,7 @@ if __name__ == '__main__':
     sfx_volume = sfx_volume / 100
 
     pygame.display.set_caption('tetris')
-    settings_ui = SettingsUI()  # инициализируем настройки
+    settings_ui = SettingsUI(music_volume, sfx_volume, difficulty, language, theme)  # инициализируем настройки
     settings_ui.options['difficulty'] = difficulty  # загружаем сложность
     settings_ui.change_speed_block()
 
@@ -190,6 +191,7 @@ if __name__ == '__main__':
     show_statistic = False
     is_paused = False
     result_show = False
+    log_in_menu_show = False
     new_record = False
     flag_shake_y = 0
     score = 0
@@ -354,6 +356,10 @@ if __name__ == '__main__':
                     elif action == menu_ui.save_exit_button:
                         running = False
 
+                    # нажали на кнопку Log in
+                    elif action == menu_ui.log_in_button:
+                        log_in_menu_show = True
+
         # Логика паузы
         if is_paused:
             pause_time = pygame.time.get_ticks()
@@ -413,8 +419,25 @@ if __name__ == '__main__':
             if show_statistic:
                 ui_show_statistic(screen, theme, language)
                 show_statistic = False
+            elif log_in_menu_show:
+                play_music.stop()
+                signal = show_log_in(screen, theme, language)
+                if signal == 'change':
+                    music_volume, sfx_volume, difficulty, language, theme = get_player_settings()
+                    music_volume /= 100
+                    sfx_volume /= 100
+                    settings_ui = SettingsUI(music_volume, sfx_volume, difficulty, language, theme)
+                    menu_ui = MenuUI(WIDTH, HEIGHT, theme, language=language)
+                    play_music.set_volume(music_volume)
+                    play_music.play()
+                    pause_button, continue_button, back_to_menu_button, restart_button = button_set()
+                log_in_menu_show = False
             else:
                 screen.fill(settings_ui.bg_color)
+                font = pygame.font.Font(None, 50)
+                player = get_player_name()
+                active_player_text_surface = font.render(player, True, (255, 255, 255) if theme else (0, 0, 0))
+                screen.blit(active_player_text_surface, (WIDTH // 2 - active_player_text_surface.get_width() // 2, 100))
                 main_menu()
                 menu_ui.handle_event(event)
 
