@@ -35,15 +35,15 @@ def gameplay(flag_shake_y):
     key = pygame.key.get_pressed()
 
     # ускорение падения блока
-    if key[pygame.K_DOWN]:
+    if key[pygame.K_DOWN] or key[pygame.K_s]:
         block.speed = 20
     # двигаем блок вправо
-    if key[pygame.K_RIGHT]:
+    if key[pygame.K_RIGHT] or key[pygame.K_d]:
         # если мы касаемся игрового поля, сдвигаем его (для приятного эффекта столкновения с границей поля)
         dx = block.move_right(board, fps)
         if board.rect.x > left:  # ограничиваем отклонения поля вправо
             dx = 0
-    elif key[pygame.K_LEFT]:
+    elif key[pygame.K_LEFT] or key[pygame.K_a]:
         # если мы касаемся игрового поля, сдвигаем его (для приятного эффекта столкновения с границей поля)
         dx = block.move_left(board, fps)
         if board.rect.x < left:  # ограничиваем отклонения поля влево
@@ -244,7 +244,7 @@ if __name__ == '__main__':
                 pos = event.pos
 
             if tetris_game_running and event.type == pygame.KEYDOWN:  # отслеживаем нажатие клавиш в игровом процессе
-                if event.key == pygame.K_UP:  # нажали на стрелочку вверх - переворачиваем блок на 90 градусов
+                if event.key == pygame.K_UP or event.key == pygame.K_w:  # нажали на стрелочку вверх - переворачиваем блок на 90 градусов
                     block.rotation(board)
                 if event.key == pygame.K_SPACE:  # нажали на пробел - моментальный моментальное падение блока
                     block.instant_fall(board)
@@ -252,7 +252,7 @@ if __name__ == '__main__':
                     is_paused = True
 
             elif tetris_game_running and event.type == pygame.KEYUP:  # отслеживаем отпускание клавиш в игровом процессе
-                if event.key == pygame.K_DOWN:  # перестаём ускорять блок если отпустили клавишу
+                if event.key == pygame.K_DOWN or event.key == pygame.K_s:  # перестаём ускорять блок если отпустили клавишу
                     block.speed = speed
 
             elif event.type == pygame.USEREVENT:
