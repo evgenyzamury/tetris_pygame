@@ -42,7 +42,7 @@ class Block(pygame.sprite.Sprite):
                 self.fill_rects(self.rects)
                 block_cords = [board.get_cell(rect.center) for rect in self.rects]
                 if not insta_fall:  # проверка что это не мгновенное падание звука (иначе звук накладывается)
-                    self.sound_fall.set_volume(self.sfx_volume)
+                    self.sound_fall.set_volume(0.3)
                     self.sound_fall.play()
                 if check_collide(board.board, block_cords):
                     self.rect.y -= 40

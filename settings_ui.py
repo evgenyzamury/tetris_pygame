@@ -123,7 +123,7 @@ class SettingsUI:
 
             # смена звука блока
             elif self.block_slider_rect.collidepoint(event.pos):
-                self.options["block_volume"] = max(0, min(100, (
+                self.options["sfx_volume"] = max(0, min(100, (
                         event.pos[0] - self.block_slider_rect.x) * 100 // self.block_slider_rect.width))
                 signal = 'sfx volume'
 
