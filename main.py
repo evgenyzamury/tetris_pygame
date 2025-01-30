@@ -170,12 +170,13 @@ if __name__ == '__main__':
             os.mkdir('data')
         create_table()
 
+    # получаем настройки пользователя из бд
     music_volume, sfx_volume, difficulty, language, theme = get_player_settings()
+    settings_ui = SettingsUI(music_volume, sfx_volume, difficulty, language, theme)  # инициализируем настройки
     music_volume = music_volume / 100
     sfx_volume = sfx_volume / 100
 
     pygame.display.set_caption('tetris')
-    settings_ui = SettingsUI(music_volume, sfx_volume, difficulty, language, theme)  # инициализируем настройки
     settings_ui.options['difficulty'] = difficulty  # загружаем сложность
     settings_ui.change_speed_block()
 
@@ -423,15 +424,17 @@ if __name__ == '__main__':
                 play_music.stop()
                 signal = show_log_in(screen, theme, language)
                 if signal == 'change':
+                    # получаем настройки пользователя из бд
                     music_volume, sfx_volume, difficulty, language, theme = get_player_settings()
-                    music_volume /= 100
-                    sfx_volume /= 100
                     settings_ui = SettingsUI(music_volume, sfx_volume, difficulty, language, theme)
+                    # инициализируем настройки
+                    music_volume = music_volume / 100
+                    sfx_volume = sfx_volume / 100
                     menu_ui = MenuUI(WIDTH, HEIGHT, theme, language=language)
-                    play_music.set_volume(music_volume)
-                    play_music.play()
                     pause_button, continue_button, back_to_menu_button, restart_button = button_set()
                 log_in_menu_show = False
+                play_music.set_volume(music_volume)
+                play_music.play()
             else:
                 screen.fill(settings_ui.bg_color)
                 font = pygame.font.Font(None, 50)
