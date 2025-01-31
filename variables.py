@@ -19,6 +19,7 @@ theme_list = ["Light", "Dark"]
 
 translations = {
     "en": {
+        "Active player": "Active player",
         "Settings": "Settings",
         "Music Volume": "Music Volume",
         "SFX Volume": "SFX Volume",
@@ -49,6 +50,7 @@ translations = {
         "Players in system": "Players in system",
     },
     "ru": {
+        "Active player": "Активный игрок",
         "Settings": "Настройки",
         "Music Volume": "Музыка",
         "SFX Volume": "SFX Звуки",

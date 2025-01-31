@@ -97,7 +97,6 @@ def create_player(name):
     players_id = cur.execute(query).fetchone()[0]  # узнаём id у нового игрока
 
     query = f"""INSERT INTO stats VALUES({players_id}, 0, 0, 0)"""  # статистика нового игрока
-    print(query)
     cur.execute(query)
 
     query = f"""INSERT INTO settings 
