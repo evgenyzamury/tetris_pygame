@@ -17,12 +17,23 @@ class MenuUI:
 
         self.buttons = []
         self.theme = theme
-
         self.init_button()
+        self.pygame_img = pygame.image.load('data/image/tetris (3).png')
+        self.pygame_img_second = pygame.image.load('data/image/tetris (1).png')
+        self.img_qr_code = pygame.image.load('data/image/qr_code.jpg')
 
     def render(self, screen):
         for button in self.buttons:
             button.draw(screen)
+
+        scaled_img = pygame.transform.scale(self.img_qr_code, (200, 200))
+        screen.blit(scaled_img, (10, 680))
+
+        scaled_img = pygame.transform.scale(self.pygame_img, (60, 60))
+        screen.blit(scaled_img, (10, 10))
+
+        scaled_img = pygame.transform.scale(self.pygame_img_second, (60, 60))
+        screen.blit(scaled_img, (710, 800))
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEMOTION:

@@ -12,6 +12,9 @@ class SettingsUI:
         self.height = HEIGHT
         self.font = pygame.font.SysFont(None, 30)
 
+        self.pygame_img = pygame.image.load('data/image/instructions.jpg')
+        self.pygame_img_second = pygame.image.load('data/image/gameboy.png')
+
         self.theme_colors = {
             "Light": {"bg": pygame.Color("white"), "text": pygame.Color("black")},
             "Dark": {"bg": pygame.Color("black"), "text": pygame.Color("white")},
@@ -100,6 +103,13 @@ class SettingsUI:
         back_text = self.font.render(get_translation("Back", self.options["language"]), True, self.text_color)
         screen.blit(back_text, (self.back_button_rect.x + (self.back_button_rect.width - back_text.get_width()) // 2,
                                 self.back_button_rect.y + (self.back_button_rect.height - back_text.get_height()) // 2))
+
+        # инструкция управления
+        scaled_img = pygame.transform.scale(self.pygame_img, (320, 390))
+        screen.blit(scaled_img, (440, 460))
+
+        scaled_img = pygame.transform.scale(self.pygame_img_second, (60, 60))
+        screen.blit(scaled_img, (720, 10))
 
     def change_speed_block(self):
         # Установка скорости в зависимости от сложности
