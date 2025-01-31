@@ -489,7 +489,11 @@ if __name__ == '__main__':
                 lines_filled = board.check_fill_line(particles_group)
                 # если при падении блока заполнилась линия, увеличить силу тряски
                 if lines_filled > 0:
-                    score += lines_filled * 100
+                    score += 100
+                    lines_filled -= 1
+                    score += lines_filled * 150
+                    if lines_filled == 3:
+                        score += 50
                     power_shake_y = 4
                 else:  # иначе поставить её обычную
                     power_shake_y = 1
