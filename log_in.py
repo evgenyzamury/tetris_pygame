@@ -5,7 +5,7 @@ from button import Button
 from variables import translations
 
 
-def set_ui(theme, language, players_in_system, max_width):
+def set_ui(theme, language, players_in_system):
     bg_color = 'Black' if theme else 'White'
     color_text = (255, 255, 255) if theme else (0, 0, 0)
     input_box = InputBox(theme, 120, 10)
@@ -15,6 +15,7 @@ def set_ui(theme, language, players_in_system, max_width):
     font = pygame.font.Font(None, 30)
     players_in_system_text_surface = font.render(f'--{translations[language]['Players in system']}:', True, color_text)
 
+    max_width = len(max(players_in_system, key=len)) * 15
     players_button_list = []
     x, y = 50, 150
     for player in players_in_system:
@@ -30,10 +31,9 @@ def show_log_in(screen, theme, language):
     running = True
     font = pygame.font.Font(None, 30)
     players_in_system = get_players_name()
-    max_width = len(max(players_in_system, key=len)) * 15
 
     (bg_color, color_text, input_box, back_button,
-     players_in_system_text_surface, players_button_list) = set_ui(theme, language, players_in_system, max_width)
+     players_in_system_text_surface, players_button_list) = set_ui(theme, language, players_in_system)
 
     while running:
         screen.fill(bg_color)
@@ -57,7 +57,7 @@ def show_log_in(screen, theme, language):
 
                         (bg_color, color_text, input_box, back_button,
                          players_in_system_text_surface, players_button_list) = set_ui(theme, language,
-                                                                                       players_in_system, max_width)
+                                                                                       players_in_system)
                         break
 
             signal, name = input_box.handle_event(event, players_in_system)
@@ -65,8 +65,7 @@ def show_log_in(screen, theme, language):
             if signal:
                 music_volume, sfx_volume, difficulty, language, theme = get_player_settings()
                 (bg_color, color_text, input_box, back_button,
-                 players_in_system_text_surface, players_button_list) = set_ui(theme, language, players_in_system,
-                                                                               max_width)
+                 players_in_system_text_surface, players_button_list) = set_ui(theme, language, players_in_system)
                 signals.append(signal)
 
             back_button.handle_event(event)
