@@ -35,7 +35,7 @@ class Button:
     def check_hover(self, pos):  # проверяем навились ли мы на кнопку`
         if self.rect.collidepoint(pos):
             if not self.hover:
-                self.sound.set_volume(0.8)
+                self.sound.set_volume(0.3)
                 self.sound.play()
             self.hover = True
         else:

@@ -12,9 +12,9 @@ from settings_ui import SettingsUI
 from UI_statistik import ui_show_statistic
 from log_in import show_log_in
 from database import *
-from variables import translations
+from variables import translations, WIDTH, HEIGHT
 
-SIZE = WIDTH, HEIGHT = 800, 900
+SIZE = WIDTH, HEIGHT
 FPS = 1650
 
 BLOCKS = [ZBlock, SBlock, IBlock, LBlock, TBlock, JBlock, OBlock]
