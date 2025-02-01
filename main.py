@@ -377,6 +377,7 @@ if __name__ == '__main__':
                         pos = event.pos
                     if event.type == pygame.USEREVENT:
                         if event.button == back_to_menu_button:  # нажали на клавишу back to menu возвращаемся в лобби
+                            board.clear_destroy(particles_group)
                             is_paused = False
                             tetris_game_running = False
                             start_menu = True
@@ -434,7 +435,7 @@ if __name__ == '__main__':
                     pause_button, continue_button, back_to_menu_button, restart_button = button_set()
                 log_in_menu_show = False
                 play_music.set_volume(music_volume)
-                play_music.play()
+                play_music.play(-1)
             else:
                 screen.fill(settings_ui.bg_color)
                 font = pygame.font.Font(None, 50)
