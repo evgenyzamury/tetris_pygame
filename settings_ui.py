@@ -120,8 +120,6 @@ class SettingsUI:
             scaled_img = pygame.transform.scale(self.decoretion_dark_theme, (60, 60))
             screen.blit(scaled_img, (720, 10))
 
-
-
     def change_speed_block(self):
         # Установка скорости в зависимости от сложности
         if self.options['difficulty'] == 0:
