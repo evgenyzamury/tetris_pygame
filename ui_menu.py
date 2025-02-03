@@ -18,22 +18,37 @@ class MenuUI:
         self.buttons = []
         self.theme = theme
         self.init_button()
-        self.pygame_img = pygame.image.load('data/image/tetris (3).png')
-        self.pygame_img_second = pygame.image.load('data/image/tetris (1).png')
-        self.img_qr_code = pygame.image.load('data/image/qr_code.jpg')
+
+        self.decoration_white_theme_1 = pygame.image.load('data/image/tetris (3).png')
+        self.decoration_white_theme_2 = pygame.image.load('data/image/tetris (1).png')
+        self.decoration_white_theme_qr_code = pygame.image.load('data/image/qr_code.jpg')
+
+        self.decoration_dark_theme_1 = pygame.image.load('data/image/dark_theme_tetris (3).png')
+        self.decoration_dark_theme_2 = pygame.image.load('data/image/dark_theme_tetris (1).png')
+        self.decoration_dark_theme_qr_code = pygame.image.load('data/image/dark_theme_qr_code.jpg')
 
     def render(self, screen):
         for button in self.buttons:
             button.draw(screen)
 
-        scaled_img = pygame.transform.scale(self.img_qr_code, (200, 200))
-        screen.blit(scaled_img, (10, 680))
+        if self.theme == 0:
+            scaled_img = pygame.transform.scale(self.decoration_white_theme_qr_code, (200, 200))
+            screen.blit(scaled_img, (10, 680))
 
-        scaled_img = pygame.transform.scale(self.pygame_img, (60, 60))
-        screen.blit(scaled_img, (10, 10))
+            scaled_img = pygame.transform.scale(self.decoration_white_theme_2, (60, 60))
+            screen.blit(scaled_img, (10, 10))
 
-        scaled_img = pygame.transform.scale(self.pygame_img_second, (60, 60))
-        screen.blit(scaled_img, (710, 800))
+            scaled_img = pygame.transform.scale(self.decoration_white_theme_1, (60, 60))
+            screen.blit(scaled_img, (710, 800))
+        else:
+            scaled_img = pygame.transform.scale(self.decoration_dark_theme_qr_code, (200, 200))
+            screen.blit(scaled_img, (10, 680))
+
+            scaled_img = pygame.transform.scale(self.decoration_dark_theme_2, (60, 60))
+            screen.blit(scaled_img, (10, 10))
+
+            scaled_img = pygame.transform.scale(self.decoration_dark_theme_1, (60, 60))
+            screen.blit(scaled_img, (710, 800))
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEMOTION:
@@ -57,30 +72,33 @@ class MenuUI:
         spacing = 20
         center_x = self.width // 2 - button_width // 2
         start_y = self.height // 2 - (2 * button_height + 1.5 * spacing)
-        self.continue_button = Button(center_x, start_y, button_width, button_height,
-                                      translations[self.language]['Continue'],
+
+        self.log_in_button = Button(center_x, start_y + 1, button_width, button_height,
+                                    translations[self.language]['Log in'],
+                                    ((0, 0, 0) if self.theme else (255, 255, 255)),
+                                    hover_color='gray', text_size=30, theme=self.theme)
+
+        self.continue_button = Button(center_x, start_y + 1 * (button_height + spacing), button_width,
+                                      button_height,
+                                      translations[self.language]['Start Game'],
                                       ((0, 0, 0) if self.theme else (255, 255, 255)),
                                       hover_color='gray', text_size=30, theme=self.theme)
 
-        self.settings_button = Button(center_x, start_y + button_height + spacing, button_width, button_height,
+        self.settings_button = Button(center_x, start_y + 2 * (button_height + spacing), button_width,
+                                      button_height,
                                       translations[self.language]['Settings'],
                                       ((0, 0, 0) if self.theme else (255, 255, 255)), hover_color='gray',
                                       text_size=30, theme=self.theme)
 
-        self.results_button = Button(center_x, start_y + 2 * (button_height + spacing), button_width,
+        self.results_button = Button(center_x, start_y + 3 * (button_height + spacing), button_width,
                                      button_height, translations[self.language]['Results'],
                                      ((0, 0, 0) if self.theme else (255, 255, 255)),
                                      hover_color='gray', text_size=30, theme=self.theme)
 
-        self.save_exit_button = Button(center_x, start_y + 3 * (button_height + spacing), button_width,
+        self.save_exit_button = Button(center_x, start_y + 4 * (button_height + spacing), button_width,
                                        button_height, translations[self.language]['Save and Exit'],
                                        ((0, 0, 0) if self.theme else (255, 255, 255)),
                                        hover_color='gray', text_size=30, theme=self.theme)
-
-        self.log_in_button = Button(center_x, start_y + 4 * (button_height + spacing), button_width,
-                                    button_height, translations[self.language]['Log in'],
-                                    ((0, 0, 0) if self.theme else (255, 255, 255)),
-                                    hover_color='gray', text_size=30, theme=self.theme)
 
         self.buttons = [
             self.continue_button,

@@ -12,8 +12,10 @@ class SettingsUI:
         self.height = HEIGHT
         self.font = pygame.font.SysFont(None, 30)
 
-        self.pygame_img = pygame.image.load('data/image/instructions.jpg')
-        self.pygame_img_second = pygame.image.load('data/image/gameboy.png')
+        self.white_img_instruction = pygame.image.load('data/image/instructions.jpg')
+        self.dark_img_instruction = pygame.image.load('data/image/dark_img_instructions.jpg')
+        self.decoretion_white_theme = pygame.image.load('data/image/gameboy.png')
+        self.decoretion_dark_theme = pygame.image.load('data/image/dark_theme_gameboy.png')
 
         self.theme_colors = {
             "Light": {"bg": pygame.Color("white"), "text": pygame.Color("black")},
@@ -105,11 +107,20 @@ class SettingsUI:
                                 self.back_button_rect.y + (self.back_button_rect.height - back_text.get_height()) // 2))
 
         # инструкция управления
-        scaled_img = pygame.transform.scale(self.pygame_img, (320, 390))
-        screen.blit(scaled_img, (440, 460))
+        if self.bg_color == (255, 255, 255):
+            scaled_img = pygame.transform.scale(self.white_img_instruction, (320, 390))
+            screen.blit(scaled_img, (440, 460))
 
-        scaled_img = pygame.transform.scale(self.pygame_img_second, (60, 60))
-        screen.blit(scaled_img, (720, 10))
+            scaled_img = pygame.transform.scale(self.decoretion_white_theme, (60, 60))
+            screen.blit(scaled_img, (720, 10))
+        else:
+            scaled_img = pygame.transform.scale(self.dark_img_instruction, (320, 390))
+            screen.blit(scaled_img, (440, 460))
+
+            scaled_img = pygame.transform.scale(self.decoretion_dark_theme, (60, 60))
+            screen.blit(scaled_img, (720, 10))
+
+
 
     def change_speed_block(self):
         # Установка скорости в зависимости от сложности

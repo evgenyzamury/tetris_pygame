@@ -143,7 +143,7 @@ def button_set():
                           ((0, 0, 0) if theme else (255, 255, 255)),
                           hover_color='gray', text_size=30, theme=theme)
 
-    continue_button = Button((WIDTH - 200) // 2, HEIGHT // 2 - 50 - 10, 200, 60, translations[language]['Continue'],
+    continue_button = Button((WIDTH - 200) // 2, HEIGHT // 2 - 50 - 10, 200, 60, translations[language]['Start Game'],
                              ((0, 0, 0) if theme else (255, 255, 255)), hover_color='gray', text_size=30, theme=theme)
 
     back_to_menu_button = Button((WIDTH - 200) // 2, HEIGHT // 2 + 50 + 10, 200, 60,
@@ -422,7 +422,6 @@ if __name__ == '__main__':
                 ui_show_statistic(screen, theme, language)
                 show_statistic = False
             elif log_in_menu_show:
-                play_music.stop()
                 signal = show_log_in(screen, theme, language)
                 if signal == 'change':
                     # получаем настройки пользователя из бд
@@ -434,8 +433,6 @@ if __name__ == '__main__':
                     menu_ui = MenuUI(WIDTH, HEIGHT, theme, language=language)
                     pause_button, continue_button, back_to_menu_button, restart_button = button_set()
                 log_in_menu_show = False
-                play_music.set_volume(music_volume)
-                play_music.play(-1)
             else:
                 screen.fill(settings_ui.bg_color)
                 font = pygame.font.Font(None, 50)
